@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_salary_rule_view_form_inherited" model="ir.ui.view">
+            <field name="name">inherit hr salary rule view form</field>
+            <field name="model">hr.salary.rule</field>
+            <field name="inherit_id" ref="payroll_account.hr_salary_rule_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page" position="after">
+                    <page name="aportes_contribuciones" string="Aportes y Contribuciones">
+                        <group>
+                            <group>
+                                <group>
+                                    <field name="marca_repeticion"/>
+                                </group>
+                                <group></group>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <separator string="Aportes"/>
+                                <field name="aporte_sipa"/>
+                                <field name="aporte_inssjyp"/>
+                                <field name="aporte_obra_social"/>
+                                <field name="aporte_fsr"/>
+                                <field name="aporte_renatea"/>
+                                <field name="aporte_regimenes_diferenciales"/>
+                                <field name="aporte_regimenes_especiales"/>
+                            </group>
+                            <group>
+                                <separator string="Contribuciones"/>
+                                <field name="contrib_sipa"/>
+                                <field name="contrib_inssjyp"/>
+                                <field name="contrib_obra_social"/>
+                                <field name="contrib_fsr"/>
+                                <field name="contrib_renatea"/>
+                                <field name="contrib_asignaciones_familiares"/>
+                                <field name="contrib_fondo_nacional_empleo"/>
+                                <field name="contrib_ley_riego_trabajo"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page name="importes_personalizados" string="Importes Personalizados">
+                        <separator string="Importes Personalizados"/>
+                        <field name="custom_amount_ids">
+                            <list editable="bottom">
+                                <field name="employee_id" string="Empleado"/>
+                                <field name="categoria" string="Categoría" force_save="1" readonly="1" />
+                                <field name="importe"/>
+                            </list>
+                        </field>
+                    </page>
+	    	    </xpath>
+		        <xpath expr="//field[@name='appears_on_payslip']" position="after">
+                    <field name="custom_amount" widget="boolean_toggle"/>
+                    <field name="custom_aux_rule" widget="boolean_toggle"/>
+                </xpath>
+                <xpath expr="//field[@name='custom_amount_ids']/list/field[@name='employee_id']" position="attributes">
+                    <attribute name="width">40%</attribute>.
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

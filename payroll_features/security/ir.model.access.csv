@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vacacion,vacacion,model_vacacion,,1,1,1,1
+access_detalle_vacacion,detalle.vacacion,model_detalle_vacacion,,1,1,1,1
+access_retribuciones_categorias,retribuciones.categorias,model_retribuciones_categorias,,1,1,1,1
+access_libro_sueldo,libro.sueldo,model_libro_sueldo,,1,1,1,1
+access_libro_sueldo_empleado,hr.employee.libro,model_hr_employee_libro,,1,1,1,1
+access_custom_amount,hr.salary.rule.custom.amount,model_hr_salary_rule_custom_amount,,1,1,1,1
+

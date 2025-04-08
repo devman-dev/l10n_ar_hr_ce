@@ -1,0 +1,49 @@
+<odoo>
+    <record model="ir.actions.act_window" id="libro_sueldo_action">
+        <field name="name">Libro de sueldos</field>
+        <field name="res_model">libro.sueldo</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="libro_sueldo_form" model="ir.ui.view">
+        <field name="name">Libro sueldo form</field>
+        <field name="model">libro.sueldo</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="generar_libro_sueldo" string="Generar libro de sueldos txt" confirm="Generar libro de sueldos?" class="btn btn-primary" type="object"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="procesamiento_liquidaciones" required="1"/>
+                        <field name="archivo" filename="name" readonly="1" force_save="1"/>
+                        <field name="name" invisible="1"/>
+                        <field name="rectify" widget="boolean_toggle"/>
+                        <field name="comentario"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="libro_sueldo_tree" model="ir.ui.view">
+        <field name="name">Libro sueldo tree</field>
+        <field name="model">libro.sueldo</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="procesamiento_liquidaciones"/>
+                <field name="archivo"/>
+                <field name="comentario"/>
+            </list>
+        </field>
+    </record>
+
+    <menuitem name="Libro de Sueldos" id="libro_sueldo_root" parent="payroll.payroll_menu_root" sequence="99"/>
+
+    <menuitem name="Generar libro de sueldos" action="libro_sueldo_action" id="libro_sueldo_menu" parent="payroll_features.libro_sueldo_root"/>
+</odoo>

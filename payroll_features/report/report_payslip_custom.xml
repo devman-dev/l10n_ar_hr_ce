@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_payslip_custom_id">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="web.internal_layout">
+                <style>
+                    #redondeada {
+                    border-collapse: collapse;
+                    border-radius: 1em;
+                    overflow: hidden;
+                    width:100%;
+                    }
+                    #tabla2 {
+                    border-collapse: collapse;
+                    border-radius: 1em;
+                    overflow: hidden;
+                    width:100%;
+                    }
+                    #tabla3 {
+                    border-collapse: collapse;
+                    border-radius: 1em;
+                    overflow: hidden;
+                    width:100%;
+                    }
+                </style>
+                <style>
+                    div.saltodepagina{
+                    display:block;
+                    page-break-before:always;
+                    }
+                </style>
+                <div class="page" style="height:590px; font-family:sans-serif">
+                    <div class="row">
+                        <div class="col" style="width:48%;">
+                            <div>
+                                <table class="table" style="margin-bottom:0px;">
+                                    <thead>
+                                        <tr style="background-color: #c8c8c8">
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Periodo</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Tipo Liquidación</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Fecha de pago</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Lugar de pago</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">N° Recibo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-esc="datetime.datetime.strptime(str(o.date_from), '%Y-%m-%d').strftime('%m/%Y')"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.tipo_liquidacion"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.fecha_de_pago"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.lugar_de_pago"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.nro_recibo"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table" style="margin-top:0px; margin-bottom:0px;">
+                                    <thead>
+                                        <tr style="background-color: #c8c8c8">
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Legajo</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Apellido y Nombre</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">C.U.I.L</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.employee_id.legajo"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.employee_id.name"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.employee_id.cuil"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row" style="margin-top:0px;">
+                                    <div class="col" style="width:60%; font-size: 12px;">
+                                        <t>Remuneración: <span t-field="o.basico"/></t>
+                                        <br/>
+                                        <t>Dep. Ap. Jub: <span t-field="o.fecha_ult_deposito"/> - <span t-field="o.banco_diario_contable_id"/></t>
+                                    </div>
+                                    <div class="col" style="width:40%; margin-left:20px; font-size: 12px;">
+                                        <t>Fecha de Ingreso: <span t-field="o.contract_id.date_start"/></t>
+                                        <br/>
+                                        <t>Fecha:<span t-field="o.compute_date"/> </t>
+                                        <br/>
+                                        <t>Categoría:<span t-field="o.struct_id"/></t>
+                                    </div>
+                                </div>
+                                <table class="table" style="margin-bottom:0px; background-color:#ebe7e4;">
+                                    <thead>
+                                        <tr style="background-color: #c8c8c8">
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:9%;">CONCEPTOS</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:22%">DESCRIPCION</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:10%">UNIDADES</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:15%">VALOR UNITARIO</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:15%">HABERES REMUNERATIVOS</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:15%">HABERES NO REMUNERATIVOS</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:15%">DESCUENTOS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.dynamic_filtered_payslip_lines" t-as="lc">
+                                            <t t-if="lc.category_id.code == 'BASIC' or lc.category_id.code == 'ALW'">
+                                                <tr>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.code"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.name"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.quantity"/></td>
+                                                    <t t-if="lc.total >= 0">
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / lc.quantity,2)))"/></td>
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format(lc.total)"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                       <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / (lc.quantity * -1),2)))"/></td>
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((lc.total * -1))"/></td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="lc.category_id.code == 'HAB_NO_REM'">
+                                                <tr>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.code"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.name"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.quantity"/></td>
+                                                    <t t-if="lc.total >= 0">
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / lc.quantity,2)))"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                         <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / (lc.quantity * -1),2)))"/></td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                    <t t-if="lc.total >= 0">
+                                                       <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format(lc.total)"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                         <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((lc.total * -1))"/></td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="lc.category_id.code == 'DED'">
+                                                <tr>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.code"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.name"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.quantity"/></td>
+
+                                                    <t t-if="lc.total >= 0">
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / lc.quantity,2)))"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                         <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / (lc.quantity * -1),2)))"/></td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                    <t t-if="lc.total >= 0">
+                                                       <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format(lc.total)"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                         <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((lc.total * -1))"/></td>
+                                                    </t>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!--    #############  FIN IZQUIERDA   #############     -->
+
+                        <div class="col" style="width:4%;">
+                        </div>
+                        <!--    #############  FIN MEDIO   #############     -->
+                         <div class="col" style="width:48%;">
+                            <div>
+                                <table class="table" style="margin-bottom:0px;">
+                                    <thead>
+                                        <tr style="background-color: #c8c8c8">
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Periodo</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Tipo Liquidación</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Fecha de pago</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Lugar de pago</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">N° Recibo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-esc="datetime.datetime.strptime(str(o.date_from), '%Y-%m-%d').strftime('%m/%Y')"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.tipo_liquidacion"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.fecha_de_pago"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.lugar_de_pago"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.nro_recibo"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table" style="margin-top:0px; margin-bottom:0px;">
+                                    <thead>
+                                        <tr style="background-color: #c8c8c8">
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Legajo</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">Apellido y Nombre</th>
+                                            <th scope="col" style="padding: 3px; font-size: 12px;">C.U.I.L</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.employee_id.legajo"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.employee_id.name"/></td>
+                                            <td style="text-align: center; vertical-align: middle; padding: 3px; font-size: 12px;"><span t-field="o.employee_id.cuil"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row" style="margin-top:0px;">
+                                    <div class="col" style="width:60%; font-size: 12px;">
+                                        <t>Remuneración: <span t-field="o.basico"/></t>
+                                        <br/>
+                                        <t>Dep. Ap. Jub: <span t-field="o.fecha_ult_deposito"/> - <span t-field="o.banco_diario_contable_id"/></t>
+                                    </div>
+                                    <div class="col" style="width:40%; margin-left:20px; font-size: 12px;">
+                                        <t>Fecha de Ingreso: <span t-field="o.contract_id.date_start"/></t>
+                                        <br/>
+                                        <t>Fecha:<span t-field="o.compute_date"/> </t>
+                                        <br/>
+                                        <t>Categoría:<span t-field="o.struct_id"/></t>
+                                    </div>
+                                </div>
+                                <table class="table" style="margin-bottom:0px; background-color:#ebe7e4;">
+                                    <thead>
+                                        <tr style="background-color: #c8c8c8">
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:9%;">CONCEPTOS</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:22%">DESCRIPCION</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:10%">UNIDADES</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:15%">VALOR UNITARIO</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:15%">HABERES REMUNERATIVOS</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:15%">HABERES NO REMUNERATIVOS</th>
+                                            <th scope="col" style="font-size: 10px; text-align: center; vertical-align: middle; padding: 2px; width:15%">DESCUENTOS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.dynamic_filtered_payslip_lines" t-as="lc">
+                                            <t t-if="lc.category_id.code == 'BASIC' or lc.category_id.code == 'ALW'">
+                                                <tr>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.code"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.name"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.quantity"/></td>
+                                                    <t t-if="lc.total >= 0">
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / lc.quantity,2)))"/></td>
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format(lc.total)"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                       <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / (lc.quantity * -1),2)))"/></td>
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((lc.total * -1))"/></td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="lc.category_id.code == 'HAB_NO_REM'">
+                                                <tr>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.code"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.name"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.quantity"/></td>
+                                                    <t t-if="lc.total >= 0">
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / lc.quantity,2)))"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                         <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / (lc.quantity * -1),2)))"/></td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                    <t t-if="lc.total >= 0">
+                                                       <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format(lc.total)"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                         <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((lc.total * -1))"/></td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="lc.category_id.code == 'DED'">
+                                                <tr>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.code"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.name"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.quantity"/></td>
+
+                                                    <t t-if="lc.total >= 0">
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / lc.quantity,2)))"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                         <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((round(lc.total / (lc.quantity * -1),2)))"/></td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                    <t t-if="lc.total >= 0">
+                                                       <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format(lc.total)"/></td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0">
+                                                         <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((lc.total * -1))"/></td>
+                                                    </t>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ######  FIRMAS  ###### -->
+                <div style="height:30px;">
+
+                </div>
+
+                <div class="footer">
+                    <div class="row">
+                        <div class="col" style="width:48%;">
+                            <div class="row" style="margin-top:0px;">
+                                <div class="col" style="height: 160px; width:40%; border-radius: 15px; font-size: 10px; text-align:center; background-color:#eff0dd">
+                                    <t t-if="o.company_id.signature">
+                                        <br/>
+                                        <img t-att-src="image_data_uri(o.company_id.signature)" style="height:120px; width:160px;"/>
+                                        <br/>
+                                        <p style="color:blue;">FIRMA EMPLEADOR</p>
+                                    </t>
+                                    <t t-else="">
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <p style="color:blue;">FIRMA EMPLEADOR</p>
+                                    </t>
+                                </div>
+                                <div class="col" style="height: 160px; width:60%;">
+                                    <div class="row" style="width:100%;">
+                                        <div class="col" style="width:100%;">
+                                             <table id="redondeada" class="table-borderless">
+                                                 <thead>
+                                                    <tr style="background-color: #ffffff; height:50px;">
+                                                        <th scope="col" style="text-align: center; vertical-align: middle; background-color:#ede8df; font-size: 14px;">Subtotal</th>
+                                                        <th scope="col" style="width:30%; text-align: center; vertical-align: middle; font-size: 12px;"><span t-field="o.haberes_remunerativos"/></th>
+                                                        <th scope="col" style="width:30%;text-align: center; vertical-align: middle; background-color:#c4b7ab; font-size: 12px;"><span t-field="o.haberes_no_remunerativos"/></th>
+                                                        <th scope="col" style="width:30%; text-align: center; vertical-align: middle; background-color:#ede8df; font-size: 12px;"><span t-field="o.descuentos"/></th>
+                                                    </tr>
+                                                </thead>
+                                             </table>
+                                             <table id="tabla2" class="table-borderless">
+                                                    <thead>
+                                                        <tr style="background-color: #ffffff; height:50px;">
+                                                            <th style="width:55px;">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;</th>
+                                                            <th style="width:56%; text-align: start; vertical-align: middle; background-color:#eff0dd; color:blue; font-size: 14px;">&amp;nbsp; &amp;nbsp; TOTAL NETO</th>
+                                                            <th style="width:30%; text-align: center; vertical-align: middle; background-color:#eff0dd; font-size: 12px;"><span t-field="o.neto"/></th>
+                                                        </tr>
+                                                    </thead>
+                                             </table>
+                                            <table id="tabla3" class="table-borderless">
+                                                   <thead>
+                                                        <tr style="background-color: #ffffff; height:59px;">
+                                                            <th style="width:500px; text-align: start; background-color:#ebe7e4; color:blue;">&amp;nbsp;&amp;nbsp;Son:<br/><span t-field="o.total_en_texto" style="color: black; font-size: 12px;"/></th>
+                                                        </tr>
+                                                    </thead>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col" style="width:4%;">
+                            <div class="text-center" >
+                                 <span class="page"/>/
+                                 <span class="topage"/>
+                            </div>
+                        </div>
+
+                        <div class="col" style="width:48%;">
+                            <div class="row" style="margin-top:0px;">
+                                <div class="col" style="height: 160px; width:40%; border-radius: 15px; font-size: 10px; background-color:#eff0dd">
+                                    <p style="font-size: 9px;">Recibi de la firma cuyo rubro se indica arriba del importe
+                                        neto de esta liquidación en pago de mi remuneración
+                                        correspondiente al periodo indicado, dejando constancia de haber recibido un duplicado de la misma
+                                    </p>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <p style="color:blue; text-align:center;">FIRMA EMPLEADO</p>
+                                </div>
+                                <div class="col" style="height: 160px; width:60%;">
+                                    <div class="row" style="width:100%;">
+                                        <div class="col" style="width:100%;">
+                                             <table id="redondeada" class="table-borderless">
+                                                 <thead>
+                                                    <tr style="background-color: #ffffff; height:50px;">
+                                                        <th scope="col" style="text-align: center; vertical-align: middle; background-color:#ede8df; font-size: 14px;">Subtotal</th>
+                                                        <th scope="col" style="width:30%; text-align: center; vertical-align: middle; font-size: 12px;"><span t-field="o.haberes_remunerativos"/></th>
+                                                        <th scope="col" style="width:30%;text-align: center; vertical-align: middle; background-color:#c4b7ab; font-size: 12px;"><span t-field="o.haberes_no_remunerativos"/></th>
+                                                        <th scope="col" style="width:30%; text-align: center; vertical-align: middle; background-color:#ede8df; font-size: 12px;"><span t-field="o.descuentos"/></th>
+                                                    </tr>
+                                                </thead>
+                                             </table>
+                                             <table id="tabla2" class="table-borderless">
+                                                    <thead>
+                                                        <tr style="background-color: #ffffff; height:50px;">
+                                                            <th style="width:55px;">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;</th>
+                                                            <th style="width:56%; text-align: start; vertical-align: middle; background-color:#eff0dd; color:blue; font-size: 14px;">&amp;nbsp; &amp;nbsp; TOTAL NETO</th>
+                                                            <th style="width:30%; text-align: center; vertical-align: middle; background-color:#eff0dd; font-size: 12px;"><span t-field="o.neto"/></th>
+                                                        </tr>
+                                                    </thead>
+                                             </table>
+                                            <table id="tabla3" class="table-borderless">
+                                                   <thead>
+                                                        <tr style="background-color: #ffffff; height:59px;">
+                                                            <th style="width:500px; text-align: start; background-color:#ebe7e4; color:blue;">&amp;nbsp;&amp;nbsp;Son:<br/><span t-field="o.total_en_texto" style="color: black; font-size: 12px;"/></th>
+                                                        </tr>
+                                                    </thead>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+
+
+<template id="custom_header" inherit_id="web.internal_layout">
+
+    <xpath expr="//div[1]" position="replace">
+        <div class="header" style="font-family:sans-serif">
+            <div class="row" >
+                <div class="col" style="width:48%; background-color:#eff0dd; border-radius: 15px;">
+                    <div class="row">
+                        <div class="col" style="width:40%;">
+<!--                                <img src="/payroll_features/static/src/img/centro_de_chapas.png"-->
+<!--                                     style="height: 75px; width:250px;"/>-->
+                             <img src='/web/binary/company_logo'
+                                 style="height: 75px; width:250px;"/>
+                        </div>
+                        <div class="col" style="width:60% margin-left:10px; line-height: 1.6em;">
+                            <t style="font-size:20px !important;">CENTRO DE CHAPAS ROSARIO S.A</t> <t style="font-size:12px !important;">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Original</t>
+                            <br/>
+                            <t style="font-size:12px !important;">Dirección: Bv. Oroño 4190</t>
+                            <br/>
+                            <t style="font-size:12px !important;">C.U.I.T: 30-68544773-4 2000 ROSARIO</t>
+                        </div>
+                    </div>
+                </div>
+                <div class="col" style="width:4%;">
+                </div>
+                <div class="col" style="width:48%; background-color:#eff0dd; border-radius: 15px;">
+                    <div class="row">
+                        <div class="col" style="width:40%;">
+<!--                                <img src="/payroll_features/static/src/img/centro_de_chapas.png"-->
+<!--                                     style="height: 75px; width:250px;"/>-->
+                            <img src='/web/binary/company_logo'
+                                 style="height: 75px; width:250px;"/>
+                        </div>
+                        <div class="col" style="width:60% margin-left:10px; line-height: 1.6em;">
+                            <t style="font-size:20px !important;">CENTRO DE CHAPAS ROSARIO S.A</t> <t style="font-size:12px !important;">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Duplicado</t>
+                            <br/>
+                            <t style="font-size:12px !important;">Dirección: Bv. Oroño 4190</t>
+                            <br/>
+                            <t style="font-size:12px !important;">C.U.I.T: 30-68544773-4 2000 ROSARIO</t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xpath>
+</template>
+
+</odoo>
+

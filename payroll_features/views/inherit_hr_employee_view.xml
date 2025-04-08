@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_employee_view_form_inherited" model="ir.ui.view">
+            <field name="name">inherit hr employee view form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='coach_id']" position="after">
+                    <field name="anios"/>
+                    <field name="antiguedad_anterior"/>
+                    <field name="anios_ant" invisible="antiguedad_anterior == False"/>
+                </xpath>
+                <xpath expr="//field[@name='mobile_phone']" position="before">
+                    <field name="legajo" readonly="1"/>
+                    <field name="cuil" required="1"/>
+                    <field name="cbu" required="1"/>
+                    <field name="tipo_empleado" required="1"/>
+                    <field name="regla_a_cuenta_futuros" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[@name='hr_settings']" position="after">
+                    <page name="atributos_relacion_laboral" string="Atributos Relación laboral">
+                        <group>
+                            <field name="conyuge"/>
+                            <field name="cantidad_hijos"/>
+                            <field name="cct"/>
+                            <field name="scvo"/>
+                            <field name="corresponde_reduccion"/>
+                            <field name="tipo_empresa" required="1"/>
+                            <field name="tipo_de_operacion" readonly="1"/>
+                            <field name="codigo_situacion"/>
+                            <field name="codigo_condicion"/>
+                            <field name="codigo_actividad"/>
+                            <field name="codigo_modalidad_contratacion"/>
+                            <field name="codigo_siniestrado"/>
+                            <field name="codigo_localidad"/>
+                            <field name="situacion_revista_1"/>
+                            <field name="dia_ini_sit_revista_1"/>
+                            <field name="situacion_revista_2"/>
+                            <field name="dia_ini_sit_revista_2"/>
+                            <field name="situacion_revista_3"/>
+                            <field name="dia_ini_sit_revista_3"/>
+                            <field name="cant_dias_trabajados"/>
+                            <field name="horas_trabajadas"/>
+                            <field name="porcentaje_aporte_adicional_ss"/>
+                            <field name="contribucion_tarea_diferencial"/>
+                            <field name="codigo_obra_social"/>
+                            <field name="cantidad_adherentes"/>
+                            <field name="aporte_adicional_os"/>
+                            <field name="contribucion_adicional_os"/>
+                            <field name="base_calculo_diferencial_aportes_os_fsr"/>
+                            <field name="base_calculo_diferencial_os_fsr"/>
+                            <field name="base_calculo_diferencial_lrt"/>
+                            <field name="remuneracion_maternidad_anses"/>
+                            <field name="remuneracion_bruta"/>
+                            <field name="base_imponible_1"/>
+                            <field name="base_imponible_2"/>
+                            <field name="base_imponible_3"/>
+                            <field name="base_imponible_4"/>
+                            <field name="base_imponible_5"/>
+                            <field name="base_imponible_6"/>
+                            <field name="base_imponible_7"/>
+                            <field name="base_imponible_8"/>
+                            <field name="base_imponible_9"/>
+                            <field name="base_calculo_dif_aporte_seg_social"/>
+                            <field name="base_calculo_dif_contrib_seg_social"/>
+                            <field name="base_imponible_10"/>
+                            <field name="importe_a_detraer"/>
+                        </group>
+                    </page>
+                    <page name="libro_sueldos" string="Libro de Sueldos">
+                        <field name="employee_libro" create="false" edit="false" delete="false" nolabel="1">
+                            <list>
+                                <field name="employe_id" readonly="1" />
+                                <field name="nro_libro" readonly="1" />
+                                <field name="procesamiento_liquidaciones" readonly="1" />
+                                Agrega más campos según sea necesario, todos con readonly="1"
+                            </list>
+                            <form>
+                                <sheet>
+                                    <group colspan="2">
+                                        Primera columna
+                                        <group>
+                                            <field name="nro_libro" readonly="1" />
+                                            <field name="procesamiento_liquidaciones" readonly="1" />
+                                            <field name="anios" readonly="1" />
+                                            Agrega más campos si deseas
+                                        </group>
+                                        Segunda columna
+                                        <group>
+                                            <field name="codigo_actividad" readonly="1" />
+                                            <field name="codigo_modalidad_contratacion" readonly="1" />
+                                            <field name="codigo_localidad" readonly="1" />
+                                            Agrega más campos si deseas
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

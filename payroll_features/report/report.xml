@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="report_payslip_custom_paper_format" model="report.paperformat">
+        <field name="name">Payslip Custom Paperformat </field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">20</field>
+        <field name="margin_bottom">35</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">15</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_print_report_custom_payslip" model="ir.actions.report">
+        <field name="name">Recibos de sueldo</field>
+        <field name="model">hr.payslip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">payroll_features.report_payslip_custom_id</field>
+        <field name="report_file">payroll_features.report_payslip_custom</field>
+        <field name="print_report_name">
+            'Recibo de sueldo - %s' % (object.employee_id.name)
+        </field>
+        <field name="binding_model_id" ref="payroll.model_hr_payslip" />
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="payroll_features.report_payslip_custom_paper_format"/>
+    </record>
+
+    <record id="report_libro_sueldo_txt" model="ir.actions.report">
+        <field name="name">Generar archivo txt de liquidacion de sueldos</field>
+        <field name="model">hr.payslip.run</field>
+        <field name="report_type">qweb-text</field>
+        <field name="report_name">payroll_features.report_libro_sueldos_txt_id</field>
+        <field name="report_file">payroll_features.report_libro_sueldos_txt</field>
+        <field name="binding_model_id" ref="payroll.model_hr_payslip_run"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>
