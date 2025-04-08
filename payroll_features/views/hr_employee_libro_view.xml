@@ -1,0 +1,96 @@
+<odoo>
+    <record model="ir.actions.act_window" id="hr_employee_libro_action">
+        <field name="name">Empleados información libro de sueldos</field>
+        <field name="res_model">hr.employee.libro</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <record id="hr_employee_libro_form" model="ir.ui.view">
+        <field name="name">Empleados información libro de sueldos form</field>
+        <field name="model">hr.employee.libro</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group colspan="2">
+                        <group>
+                            <field name="nro_libro"/>
+                            <field name="procesamiento_liquidaciones"/>
+                            <field name="conyuge"/>
+                            <field name="cantidad_hijos"/>
+                            <field name="cct"/>
+                            <field name="scvo"/>
+                            <field name="corresponde_reduccion"/>
+                            <field name="tipo_empresa" required="1"/>
+                            <field name="tipo_de_operacion" readonly="1"/>
+                            <field name="codigo_situacion"/>
+                            <field name="codigo_condicion"/>
+                            <field name="codigo_actividad"/>
+                            <field name="codigo_modalidad_contratacion"/>
+                            <field name="codigo_siniestrado"/>
+                            <field name="codigo_localidad"/>
+                            <field name="situacion_revista_1"/>
+                            <field name="dia_ini_sit_revista_1"/>
+                            <field name="situacion_revista_2"/>
+                            <field name="dia_ini_sit_revista_2"/>
+                            <field name="situacion_revista_3"/>
+                            <field name="dia_ini_sit_revista_3"/>
+                            <field name="cant_dias_trabajados"/>
+                            <field name="horas_trabajadas"/>
+                            <field name="porcentaje_aporte_adicional_ss"/>
+                            <field name="contribucion_tarea_diferencial"/>
+                            <field name="codigo_obra_social"/>
+                            <field name="cantidad_adherentes"/>
+                            <field name="aporte_adicional_os"/>
+                            <field name="contribucion_adicional_os"/>
+                        </group>
+                        <group>
+                            <field name="base_calculo_diferencial_aportes_os_fsr"/>
+                            <field name="base_calculo_diferencial_os_fsr"/>
+                            <field name="base_calculo_diferencial_lrt"/>
+                            <field name="remuneracion_maternidad_anses"/>
+                            <field name="remuneracion_bruta"/>
+                            <field name="base_imponible_1"/>
+                            <field name="base_imponible_2"/>
+                            <field name="base_imponible_3"/>
+                            <field name="base_imponible_4"/>
+                            <field name="base_imponible_5"/>
+                            <field name="base_imponible_6"/>
+                            <field name="base_imponible_7"/>
+                            <field name="base_imponible_8"/>
+                            <field name="base_imponible_9"/>
+                            <field name="base_calculo_dif_aporte_seg_social"/>
+                            <field name="base_calculo_dif_contrib_seg_social"/>
+                            <field name="base_imponible_10"/>
+                            <field name="importe_a_detraer"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="create_date" string="Creado el"/>
+                        <field name="create_uid" string="Creado por"/>
+                        <field name="write_date" string="Modificado el"/>
+                        <field name="write_uid" string="Modificado por"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_employee_libro_tree" model="ir.ui.view">
+        <field name="name">Empleados información libro de sueldos tree</field>
+        <field name="model">hr.employee.libro</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date" string="Creado el"/>
+                <field name="create_uid" string="Creado por"/>
+                <field name="write_date" string="Modificado el"/>
+                <field name="write_uid" string="Modificado por"/>
+                <field name="nro_libro" string="Número de Libro" width="300"/>
+                <field name="procesamiento_liquidaciones"/>
+                <field name="employe_id" string="Empleado"/>
+            </tree>
+        </field>
+    </record>
+
+    <menuitem name="Empleados información libro de sueldos" action="hr_employee_libro_action" id="hr_employee_libro_menu" parent="payroll_features.libro_sueldo_root" sequence="10"/>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_numero_de_recibo" model="ir.sequence">
+        <field name="name">Numeros de recibo</field>
+        <field name="code">hr.payslip</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_numero_de_procesamiento_liquidacion" model="ir.sequence">
+        <field name="name">Numeros de Procesamient de liquidacion</field>
+        <field name="code">hr.payslip.run</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_numero_legajo_empleado" model="ir.sequence">
+        <field name="name">Numeros de legajo empleados</field>
+        <field name="code">hr.employee</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

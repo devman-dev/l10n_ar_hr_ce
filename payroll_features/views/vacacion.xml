@@ -1,0 +1,58 @@
+<odoo>
+    <record model="ir.actions.act_window" id="vacacion_action">
+        <field name="name">Vacaciones</field>
+        <field name="res_model">vacacion</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="vacacion_form" model="ir.ui.view">
+        <field name="name">vacacion form</field>
+        <field name="model">vacacion</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="anio"/>
+                        <field name="empleado_id" options="{'no_create': True, 'no_create_edit':True}"/>
+                        <field name="fecha_alta"/>
+                        <field name="dias_de_vacaciones"/>
+                        <field name="detalle_vacaciones_ids" context="{'default_cantidad_antiguedad': dias_de_vacaciones, 'default_empleado_id':empleado_id}">
+                            <tree>
+                                <field name="empleado_id" invisible="1"/>
+                                <field name="fecha_desde"/>
+                                <field name="fecha_hasta"/>
+                                <field name="cantidad" force_save="1" readonly="1"/>
+                                <field name="liquidado"/>
+                            </tree>
+                            <form>
+                                <group>
+                                    <field name="empleado_id" invisible="1"/>
+                                    <field name="fecha_desde"/>
+                                    <field name="fecha_hasta"/>
+                                    <field name="cantidad" force_save="1" readonly="1"/>
+                                    <field name="cantidad_antiguedad" invisible="1"/>
+                                    <field name="liquidado"/>
+                                </group>
+                            </form>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="vacacion_tree" model="ir.ui.view">
+        <field name="name">vacacion tree</field>
+        <field name="model">vacacion</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="anio"/>
+                <field name="empleado_id" options="{'no_create': True, 'no_create_edit':True}" />
+                <field name="fecha_alta"/>
+                <field name="dias_de_vacaciones"/>
+            </tree>
+        </field>
+    </record>
+
+    <menuitem name="Vacaciones" action="vacacion_action" id="vacaciones_menu" parent="payroll.payroll_menu_root"/>
+</odoo>

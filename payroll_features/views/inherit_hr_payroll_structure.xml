@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_payroll_structure_view_form_inherited" model="ir.ui.view">
+            <field name="name">inherit hr payroll structure view form</field>
+            <field name="model">hr.payroll.structure</field>
+            <field name="inherit_id" ref="payroll.hr_payroll_structure_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="sueldo_basico"/>
+                </xpath>
+                <xpath expr="//notebook/page" position="after">
+                    <page name="retribuciones" string="Retribuciones">
+                        <div style="width:30%">
+                            <field name="retrib_categ_ids">
+                                <tree>
+                                    <field name="retribucion"/>
+                                    <field name="vigencia_desde"/>
+                                </tree>
+                            </field>
+                        </div>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

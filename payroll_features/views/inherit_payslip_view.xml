@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="hr_payslip_view_form_inherited" model="ir.ui.view">
+            <field name="name">inherit hr payslip view form</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="payroll.hr_payslip_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='compute_date']" position="after">
+                    <field name="basico" invisible="1"/>
+                    <field name="total_en_texto" invisible="1"/>
+                    <field name="fecha_de_pago"/>
+                    <field name="lugar_de_pago"/>
+                    <field name="tipo_liquidacion"/>
+                    <field name="nro_recibo"/>
+                    <field name="dias_vacaciones"/>
+                    <field name="calculo" invisible="1"/>
+                    <field name="mes_vacacion"/>
+                </xpath>
+                <xpath expr="//page[@name='accounting']" position="after">
+                    <page name="ultimo_depósito_cargas_sociales" string="Ultimo depósito cargas sociales">
+                        <group>
+                            <group>
+                                <field name="fecha_ult_deposito" required="1"/>
+                                <field name="banco_diario_contable_id" required="1"/>
+                            </group>
+                            <group>
+                                <field name="periodo_ult_deposito" required="1"/>
+                                <field name="periodo_mes_anio"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='hide_invisible_lines']" position="after">
+                    <field name="ajuste"/>
+                </xpath>
+                <xpath expr="//field[@name='dynamic_filtered_payslip_lines']" position="after">
+                    <group>
+                        <field name="haberes_remunerativos" force_save="1" readonly="1"/>
+                        <field name="haberes_no_remunerativos" force_save="1" readonly="1"/>
+                        <field name="descuentos" force_save="1" readonly="1"/>
+                        <field name="neto" force_save="1" readonly="1"/>
+                        <field name="remuneracion_bruta" force_save="1" readonly="1"/>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>
