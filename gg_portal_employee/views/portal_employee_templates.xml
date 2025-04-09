@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- <template id="portal_my_home_knowledge_override" inherit_id="knowledge.portal_my_home_knowledge" priority="101">
+        <xpath expr="//div[hasclass('o_portal_docs')]/div[last()]" position="replace">
+            <t t-if="is_employee_portal">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/knowledge/static/src/img/Books.svg'"/>
+                    <t t-set="title">E-Learning</t>
+                    <t t-set="url" t-value="'/knowledge/home'"/>
+                    <t t-set="text">Accede al centro de capacitación</t>
+                    <t t-set="placeholder_count" t-value="'knowledge_count'"/>
+                </t>
+            </t>
+            <t t-if="not is_employee_portal">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/knowledge/static/src/img/Books.svg'"/>
+                    <t t-set="title">Knowledge</t>
+                    <t t-set="url" t-value="'/knowledge/home'"/>
+                    <t t-set="text">Find all articles shared with you</t>
+                    <t t-set="placeholder_count" t-value="'knowledge_count'"/>
+                </t>
+            </t>
+        </xpath>
+    </template> -->
+    <template id="portal_my_home_employee" name="Show HR Documents" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
+        <div id="portal_common_category" position="before">
+            <div id="portal_hr_documents" class="o_portal_category row g-2 mt-3">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/mrp_subcontracting/static/src/img/manufacturing.svg'"/>
+                    <t t-set="placeholder_count" t-value="'legajo_digital'"/>
+                    <t t-set="title">Legajo Digital</t>
+                    <t t-set="text">Datos personales</t>
+                    <t t-set="url" t-value="'/my/legajo'"/>
+                    <t t-set="show_count" t-value="False"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/mrp_subcontracting/static/src/img/manufacturing.svg'"/>
+                    <t t-set="placeholder_count" t-value="'payrolls'"/>
+                    <t t-set="title">Recibos de Sueldo</t>
+                    <t t-set="text">Firma y descarga tus recibos de sueldo</t>
+                    <t t-set="url" t-value="'/my/payslips'"/>
+                    <t t-set="show_count" t-value="False"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </div>
+            <div id="portal_hr_permits" class="o_portal_category row g-2 mt-3">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/mrp_subcontracting/static/src/img/manufacturing.svg'"/>
+                    <t t-set="placeholder_count" t-value="'permits'"/>
+                    <t t-set="title">Permisos y Ausencias</t>
+                    <t t-set="text">Gestiona tu tiempo personal</t>
+                    <t t-set="url" t-value="'/my/permits'"/>
+                    <t t-set="show_count" t-value="False"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </div>
+        </div>
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-if="is_employee_portal">
+                <style>
+                    #portal_client_category {
+                        display: none;
+                    }
+                    #portal_alert_category {
+                        display: none;
+                    }
+                    #portal_service_category {
+                        display: none;
+                    }
+                    #portal_vendor_category {
+                        display: none;
+                    }
+                </style>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_payslips">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title">Mis recibos de sueldo</t>
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <div class="d-flex gap-2 my-3">
+                <a href="/my/" title="Go Back" class="btn btn-light px-2"><i class="oi oi-chevron-left"/></a>
+                <h3 class="my-0">Recibos de sueldo</h3>
+            </div>
+            <section name="portal_payslip_list">
+                <div class="payslip-container">
+                    <t t-foreach="payslips" t-as="payslip">
+                        <div class="payslip-item">
+                            <h6>Recibo de sueldo del <t t-esc="payslip.date_from.strftime('%d/%m/%Y')"/></h6>
+                            <a t-att-href="'/my/payslip/download/' + str(payslip.id)">Descargar</a>
+                        </div>
+                    </t>
+                </div>
+            </section>
+            <style>
+                .payslip-container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                }
+                .payslip-item {
+                    padding: 1rem;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    width: 200px;
+                }
+            </style>
+        </t>
+    </template>
+
+    <template id="portal_my_legajo_fields">
+        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+        <div t-if="error_message" class="alert alert-danger" role="alert">
+            <div class="col-lg-12">
+                <t t-foreach="error_message" t-as="err"><t t-esc="err"/><br /></t>
+            </div>
+        </div>
+        <div t-attf-class="mb-3 #{error.get('name') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="name">Nombre</label>
+            <input type="text" name="name" t-attf-class="form-control #{error.get('name') and 'is-invalid' or ''}" t-att-value="name or employee.name" t-att-disabled="1"/>
+        </div>
+        <div t-attf-class="mb-3 #{error.get('marital') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="marital">Estado civil</label>
+            <select name="marital" t-attf-class="form-select #{error.get('marital') and 'is-invalid' or ''}" t-att-disabled="None">
+                <option value="">Estado Civil...</option>
+                <option t-att-value="single" t-att-selected="employee.marital == 'single'">
+                    Soltero/a
+                </option>
+                <option t-att-value="married" t-att-selected="employee.marital == 'married'">
+                    Casado/a
+                </option>
+                <option t-att-value="legal_cohabitant" t-att-selected="employee.marital == 'legal_cohabitant'">
+                    Concubino/a
+                </option>
+                <option t-att-value="widowed" t-att-selected="employee.marital == 'widowed'">
+                    Viudo/a
+                </option>
+                <option t-att-value="divorced" t-att-selected="employee.marital == 'divorced'">
+                    Divorciado/a
+                </option>
+            </select>
+        </div>
+        <div t-attf-class="mb-3 #{error.get('children') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="children">Cantidad de hijos dependientes:</label>
+            <input type="text" name="children" t-attf-class="form-control #{error.get('children') and 'is-invalid' or ''}" t-att-value="children or employee.children" t-att-disabled="None"/>
+        </div>
+        <div class="clearfix" />
+        <div t-attf-class="mb-3 #{error.get('account_number') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="account_number">Numero de cuenta</label>
+            <input type="text" name="account_number" t-attf-class="form-control #{error.get('account_number') and 'is-invalid' or ''}" t-att-value="account_number or employee.bank_account_id.acc_number" t-att-disabled="None"/>
+        </div>
+        <div t-attf-class="mb-3 #{error.get('bank_id') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="bank_id">Banco</label>
+            <select name="bank_id" t-attf-class="form-select #{error.get('bank_id') and 'is-invalid' or ''}" t-att-disabled="None">
+                <option value="">Banco...</option>
+                <t t-foreach="bancos" t-as="banco">
+                    <option t-att-value="banco.id" t-att-selected="employee.bank_account_id.bank_id.id == banco.id">
+                        <t t-esc="banco.name"/>
+                    </option>
+                </t>
+            </select>
+        </div>
+        <div class="clearfix" />
+
+        <div t-attf-class="mb-3 #{error.get('private_email') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="private_email">Email</label>
+            <input type="email" name="private_email" t-attf-class="form-control #{error.get('private_email') and 'is-invalid' or ''}" t-att-value="private_email or employee.private_email" />
+        </div>
+        <div t-attf-class="mb-3 #{error.get('private_phone') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="private_phone">Teléfono</label>
+            <input type="tel" name="private_phone" t-attf-class="form-control #{error.get('private_phone') and 'is-invalid' or ''}" t-att-value="private_phone or employee.private_phone" />
+        </div>
+
+        <div class="clearfix" />
+        <div t-attf-class="mb-3 #{error.get('private_street') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="private_street">Calle</label>
+            <input type="text" name="private_street" t-attf-class="form-control #{error.get('private_street') and 'is-invalid' or ''}" t-att-value="private_street or employee.private_street"/>
+        </div>
+        <div t-attf-class="mb-3 #{error.get('private_city') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="private_city">Ciudad</label>
+            <input type="text" name="private_city" t-attf-class="form-control #{error.get('private_city') and 'is-invalid' or ''}" t-att-value="private_city or employee.private_city" />
+        </div>
+        <div t-attf-class="mb-3 #{error.get('private_zip') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label label-optional" for="private_zip">Código postal</label>
+            <input type="text" name="private_zip" t-attf-class="form-control #{error.get('private_zip') and 'is-invalid' or ''}" t-att-value="private_zip or employee.private_zip" />
+        </div>
+
+    </template>
+
+    <template id="portal_my_legajo">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <t t-set="additional_title">Mi legajo</t>
+            <div class="d-flex gap-2 my-3">
+                <a href="/my/" title="Go Back" class="btn btn-light px-2"><i class="oi oi-chevron-left"/></a>
+                <h3 class="my-0">Legajo Digital</h3>
+            </div>
+            <section name="portal_update_legajo">
+                <form action="/my/legajo" method="post">
+                    <div class="row o_portal_details">
+                        <div class="col-lg-8">
+                            <div class="row">
+                                <t t-call="gg_portal_employee.portal_my_legajo_fields"/>
+                                <input type="hidden" name="redirect" t-att-value="redirect"/>
+                            </div>
+                            <div class="clearfix text-end mb-5">
+                                <a href="/my/" class="btn btn-secondary me-2">
+                                    Descartar
+                                </a>
+                                <button type="submit" class="btn btn-primary float-end">
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </t>
+    </template>
+
+    <template id="portal_my_permits">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <t t-set="additional_title">Mis permisos y ausencias</t>
+            <div class="d-flex gap-2 my-3">
+                <a href="/my/" title="Go Back" class="btn btn-light px-2"><i class="oi oi-chevron-left"/></a>
+                <h3 class="my-0">Mis permisos y ausencias</h3>
+            </div>
+            <section name="portal_update_permits">
+                <form action="/my/permits" method="POST" enctype="multipart/form-data">
+                    <div class="row o_portal_details">
+                        <div class="col-lg-8">
+                            <div class="row">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div t-if="error_message" class="alert alert-danger" role="alert">
+                                    <div class="col-lg-12">
+                                        <t t-foreach="error_message" t-as="err"><t t-esc="err"/><br /></t>
+                                    </div>
+                                </div>
+                                <div t-if="success_message" class="alert alert-success text-center" role="alert">
+                                    <div class="col-lg-12">
+                                        <t t-esc="success_message"/><br />
+                                    </div>
+                                </div>
+                                <div t-attf-class="mb-3 #{error.get('name') and 'o_has_error' or ''} col-xl-6">
+                                    <label class="col-form-label" for="name">Nombre</label>
+                                    <input type="text" name="name" t-attf-class="form-control #{error.get('name') and 'is-invalid' or ''}" t-att-value="name or employee.name" t-att-disabled="1"/>
+                                </div>
+                                <div t-attf-class="mb-3 #{error.get('hr_leave_type') and 'o_has_error' or ''} col-xl-6">
+                                    <label class="col-form-label" for="hr_leave_type">Tipo de ausencia:</label>
+                                    <select name="hr_leave_type" t-attf-class="form-select #{error.get('hr_leave_type') and 'is-invalid' or ''}" t-att-disabled="None">
+                                        <option value="">Seleccionar...</option>
+                                        <t t-foreach="hr_leave_types" t-as="leave_type">
+                                            <option t-att-value="leave_type.id">
+                                                <t t-esc="leave_type.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="clearfix" />
+                                <div t-attf-class="mb-3 #{error.get('date_start') and 'o_has_error' or ''} col-xl-6">
+                                    <label class="col-form-label" for="date_start">Fecha de inicio</label>
+                                    <input type="date" data-date-format="YYYY-MM-DD" name="date_start" t-attf-class="form-control #{error.get('date_start') and 'is-invalid' or ''}" t-att-value="date_start" t-att-disabled="None"/>
+                                </div>
+                                <div t-attf-class="mb-3 #{error.get('date_end') and 'o_has_error' or ''} col-xl-6">
+                                    <label class="col-form-label" for="date_end">Fecha de finalizacion</label>
+                                    <input type="date" data-date-format="YYYY-MM-DD" name="date_end" t-attf-class="form-control #{error.get('date_end') and 'is-invalid' or ''}" t-att-value="date_end" t-att-disabled="None"/>
+                                </div>
+                                <div class="clearfix" />
+                                <div t-attf-class="mb-3 #{error.get('description') and 'o_has_error' or ''} col-xl-6">
+                                    <label class="col-form-label" for="description">Descripción</label>
+                                    <textarea type="text" name="description" style="min-height: 5rem" t-attf-class="form-control #{error.get('description') and 'is-invalid' or ''}" t-att-value="description"/>
+                                </div>
+                                <div t-attf-class="mb-3 #{error.get('attachment') and 'o_has_error' or ''} col-xl-6">
+                                    <label class="col-form-label" for="attachment">Certificado o comprobante</label>
+                                    <input id="attachment" name="attachment" type="file" accept="image/png, image/jpeg, .pdf" t-attf-class="form-control #{error.get('attachment') and 'is-invalid' or ''}" t-att-disabled="None"/>
+                                </div>
+                                <input type="hidden" name="redirect" t-att-value="redirect"/>
+                            </div>
+                            <div class="clearfix text-end mb-5">
+                                <a href="/my/" class="btn btn-secondary me-2">
+                                    Descartar
+                                </a>
+                                <button type="submit" class="btn btn-primary float-end">
+                                    Enviar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,8 @@
+<odoo>
+  <data>
+    <record id="group_portal_employee" model="res.groups">
+        <field name="category_id" ref="base.module_category_user_type"/>
+        <field name="name">Portal Employee</field>
+    </record>
+  </data>
+</odoo>
