@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_form_inherit_educational_tuc" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.educational.tuc</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <!-- Removemos los campos de su ubicación original -->
+            <xpath expr="//field[@name='legajo']" position="replace"/>
+            <xpath expr="//field[@name='cuil']" position="replace"/>
+            <xpath expr="//field[@name='cbu']" position="replace"/>
+            <xpath expr="//field[@name='tipo_empleado']" position="replace"/>
+            <xpath expr="//field[@name='tipo_empresa']" position="replace"/>
+
+            <!-- Los agregamos en la página de atributos relación laboral -->
+            <xpath expr="//page[@name='atributos_relacion_laboral']//group" position="inside">
+                <group>
+                    <field name="legajo"/>
+                    <field name="sublegajo"/>
+                    <field name="cuil"/>
+                    <field name="cbu"/>
+                    <field name="tipo_empleado"/>
+                    <field name="tipo_empresa"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
