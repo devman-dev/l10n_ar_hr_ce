@@ -7,7 +7,11 @@
     "maintainer": "Matias Banega - DEVMAN",
     "license": "LGPL-3",
     "category": "Payroll",
-    "depends": ["payroll_features", "payroll"],
+    "depends": [
+        "payroll_features",
+        "payroll",
+        "l10n_ar_payroll_ganancias"
+    ],
     "description": """
         Módulo de extensión para payroll_features que agrega funcionalidades
         específicas para el cálculo de haberes en el sector educativo de Tucumán.
