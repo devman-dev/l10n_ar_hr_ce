@@ -12,9 +12,60 @@
                             <field name="employee_id"/>
                             <field name="year"/>
                             <field name="active"/>
+                            <field name="remuneracion_bruta"/>
+                        </group>
+                        <group>
+                            <field name="total_deducciones"/>
+                            <field name="ganancia_neta"/>
+                            <field name="impuesto_determinado"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Deducciones Personales" name="deducciones_personales">
+                            <group>
+                                <group>
+                                    <field name="minimo_no_imponible"/>
+                                    <field name="deduccion_especial"/>
+                                </group>
+                                <group>
+                                    <field name="conyuge"/>
+                                    <field name="deduccion_conyuge" readonly="1"/>
+                                    <field name="cantidad_hijos"/>
+                                    <field name="deduccion_hijos" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Deducciones Art. 85" name="deducciones_art85">
+                            <group>
+                                <group>
+                                    <field name="seguro_vida"/>
+                                    <field name="seguro_retiro"/>
+                                    <field name="servicio_domestico"/>
+                                </group>
+                                <group>
+                                    <field name="alquiler"/>
+                                    <field name="cuota_medico"/>
+                                    <field name="donaciones"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Otras Deducciones" name="otras_deducciones">
+                            <field name="otras_deducciones_ids">
+                                <tree editable="bottom">
+                                    <field name="tipo"/>
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                    <field name="fecha"/>
+                                    <field name="comprobante"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
@@ -27,6 +78,10 @@
             <tree>
                 <field name="employee_id"/>
                 <field name="year"/>
+                <field name="remuneracion_bruta" sum="Total"/>
+                <field name="total_deducciones" sum="Total"/>
+                <field name="ganancia_neta" sum="Total"/>
+                <field name="impuesto_determinado" sum="Total"/>
             </tree>
         </field>
     </record>
