@@ -1,0 +1,1 @@
+Este archivo es solo para permitir la eliminación segura de hr_contract_view.xml, ya que su contenido fue unificado en hr_contract_views.xml. Puedes eliminar hr_contract_view.xml sin perder funcionalidad.

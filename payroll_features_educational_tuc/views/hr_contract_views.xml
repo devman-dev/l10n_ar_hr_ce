@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_contract_form_inherit_nivel" model="ir.ui.view">
+        <field name="name">hr.contract.form.inherit.nivel</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" ref="payroll.hr_contract_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add nivel_educativo and antiguedad_fecha within the 'salary' group -->
+            <xpath expr="//group[@name='salary']" position="inside">
+                <group string="Información Educativa y Antigüedad">
+                    <field name="nivel_educativo"/>
+                    <field name="antiguedad_fecha"/>
+                </group>
+            </xpath>
+            <!-- Keep Decretos Aplicables in 'Información salarial' tab -->
+            <xpath expr="//group[@name='salary']" position="inside">
+                <group string="Decretos Aplicables">
+                    <field name="decreto_413"/>
+                    <field name="decreto_1741"/>
+                    <field name="decreto_2780"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

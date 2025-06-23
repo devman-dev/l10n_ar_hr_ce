@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_antiguedad_tabla_tree" model="ir.ui.view">
+        <field name="name">hr.antiguedad.tabla.tree</field>
+        <field name="model">hr.antiguedad.tabla</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="tipo_empleado"/>
+                <field name="anios"/>
+                <field name="porcentaje"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_hr_antiguedad_tabla_form" model="ir.ui.view">
+        <field name="name">hr.antiguedad.tabla.form</field>
+        <field name="model">hr.antiguedad.tabla</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="tipo_empleado"/>
+                    <field name="anios"/>
+                    <field name="porcentaje"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_antiguedad_tabla" model="ir.actions.act_window">
+        <field name="name">Tabla de Antigüedad</field>
+        <field name="res_model">hr.antiguedad.tabla</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_hr_antiguedad_tabla"
+              name="Tabla de Antigüedad"
+              parent="hr.menu_hr_root"
+              action="action_hr_antiguedad_tabla"
+              sequence="100"/>
+</odoo>
