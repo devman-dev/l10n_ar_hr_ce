@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="hr.view_employee_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='birthday']" position="after">
-                <field name="antiguedad_global" readonly="1"/>
+                <field name="antiguedad_global_anios" readonly="1"/>
             </xpath>
             <!-- Los agregamos en la página de atributos relación laboral -->
             <xpath expr="//page[@name='atributos_relacion_laboral']//group" position="inside">

@@ -5,11 +5,11 @@
         <field name="model">hr.contract</field>
         <field name="inherit_id" ref="payroll.hr_contract_view_form"/>
         <field name="arch" type="xml">
-            <!-- Add nivel_educativo and antiguedad_fecha within the 'salary' group -->
+            <!-- Add nivel_educativo and antiguedad_anios within the 'salary' group -->
             <xpath expr="//group[@name='salary']" position="inside">
                 <group string="Información Educativa y Antigüedad">
                     <field name="nivel_educativo"/>
-                    <field name="antiguedad_fecha"/>
+                    <field name="antiguedad_anios"/>
                 </group>
                 <group string="Decretos Aplicables">
                     <field name="decreto_413"/>

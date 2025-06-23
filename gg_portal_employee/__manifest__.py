@@ -4,8 +4,9 @@
 {
     'name': 'Employee Portal',
     'summary': 'Employee Portal',
-    'sequence': 9001,
-    'category': 'Hidden',
+    "version": "1.0.0",
+    'sequence': -1,
+    'category': 'Payroll',
     'description': """""",
     # 'depends': ['base', 'web', 'bus', 'website', 'web_editor', 'http_routing', 'mail', 'auth_signup', 'hr', 'payroll', 'calendar', 'knowledge', 'hr_holidays'],
     'depends': ['base', 'web', 'bus', 'website', 'web_editor', 'http_routing', 'mail', 'auth_signup', 'hr', 'payroll', 'calendar', 'hr_holidays'],

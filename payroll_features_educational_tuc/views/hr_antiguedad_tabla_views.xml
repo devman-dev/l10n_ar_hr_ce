@@ -34,7 +34,7 @@
 
     <menuitem id="menu_hr_antiguedad_tabla"
               name="Tabla de Antigüedad"
-              parent="hr.menu_hr_root"
+              parent="hr.menu_hr_employee_payroll"
               action="action_hr_antiguedad_tabla"
               sequence="100"/>
 </odoo>

@@ -16,7 +16,25 @@ class HrContractInherit(models.Model):
         ('universitario', 'Universitario'),
     ], string='Nivel Educativo', required=True)
 
-    antiguedad_fecha = fields.Date('Fecha de Antigüedad')
+    
+    antiguedad_anios = fields.Integer(
+        string='Años de Antigüedad',
+        compute='_compute_antiguedad_anios',
+        store=True
+    )
+
+    @api.depends('date_start')
+    def _compute_antiguedad_anios(self):
+        from datetime import date
+        for contract in self:
+            if contract.date_start:
+                today = date.today()
+                diff = today.year - contract.date_start.year - (
+                    (today.month, today.day) < (contract.date_start.month, contract.date_start.day)
+                )
+                contract.antiguedad_anios = max(diff, 0)
+            else:
+                contract.antiguedad_anios = 0
 
     # 🔧 Sobrescribimos el create para evitar la validación del contrato único
     @api.model
