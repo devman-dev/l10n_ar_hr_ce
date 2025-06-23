@@ -47,3 +47,20 @@ class HrContractInherit(models.Model):
                     raise ValidationError(
                         "Un empleado solo puede tener un contrato activo a la vez (por defecto de Odoo)."
                     )
+    
+    # Sobrescribimos la restricción para permitir varios contratos activos con distinto nivel educativo
+    @api.constrains('employee_id', 'state', 'nivel_educativo')
+    def _check_multiple_contracts_per_nivel(self):
+        for contract in self:
+            if contract.state not in ('draft', 'cancel'):
+                domain = [
+                    ('employee_id', '=', contract.employee_id.id),
+                    ('state', 'not in', ('draft', 'cancel')),
+                    ('nivel_educativo', '=', contract.nivel_educativo),
+                    ('id', '!=', contract.id)
+                ]
+                other = self.search_count(domain)
+                if other:
+                    raise models.ValidationError(
+                        "Un empleado solo puede tener un contrato activo por nivel educativo a la vez."
+                    )

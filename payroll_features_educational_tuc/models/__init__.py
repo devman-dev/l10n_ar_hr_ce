@@ -4,3 +4,4 @@ from . import res_company
 from . import hr_employee
 from . import hr_payslip_run
 from . import hr_antiguedad_tabla
+from . import hr_payslip_by_employees

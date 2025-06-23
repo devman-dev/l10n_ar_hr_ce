@@ -27,6 +27,7 @@
         "views/hr_payslip_run_views.xml",
         "views/hr_employee_views.xml",
         "views/hr_antiguedad_tabla_views.xml",
+        "views/hr_payslip_by_employees_view.xml",
     ],
     'post_init_hook': 'apply_monkey_patch',
     "installable": True,

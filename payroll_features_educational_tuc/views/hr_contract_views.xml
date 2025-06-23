@@ -11,9 +11,6 @@
                     <field name="nivel_educativo"/>
                     <field name="antiguedad_fecha"/>
                 </group>
-            </xpath>
-            <!-- Keep Decretos Aplicables in 'Información salarial' tab -->
-            <xpath expr="//group[@name='salary']" position="inside">
                 <group string="Decretos Aplicables">
                     <field name="decreto_413"/>
                     <field name="decreto_1741"/>

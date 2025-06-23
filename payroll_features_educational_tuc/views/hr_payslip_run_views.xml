@@ -5,7 +5,7 @@
         <field name="model">hr.payslip.run</field>
         <field name="inherit_id" ref="payroll.hr_payslip_run_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='name']" position="after">
+            <xpath expr="//field[@name='struct_id']" position="after">
                 <field name="nivel_educativo"/>
             </xpath>
         </field>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_payslip_by_employees_form_inherit_nivel" model="ir.ui.view">
+        <field name="name">hr.payslip.by.employees.form.inherit.nivel</field>
+        <field name="model">hr.payslip.by.employees</field>
+        <field name="inherit_id" ref="payroll.view_hr_payslip_by_employees_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_ids']" position="before">
+                <label string="Solo se muestran empleados con contratos activos del nivel educativo seleccionado en el lote."/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
