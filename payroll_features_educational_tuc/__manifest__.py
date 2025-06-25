@@ -21,6 +21,7 @@
         * Integración con sistema de puntajes docentes
     """,
     "data": [
+        "data/cron_actualizar_antiguedad.xml",
         "views/hr_payroll_structure_views.xml",
         "views/res_company_views.xml",
         "views/hr_contract_views.xml",

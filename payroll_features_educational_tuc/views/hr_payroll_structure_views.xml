@@ -1,15 +1,56 @@
 <odoo>
+    <!-- Vista formulario (ya existente) -->
     <record id="view_hr_payroll_structure_form_inherit_educational_tuc" model="ir.ui.view">
         <field name="name">hr.payroll.structure.form.inherit.educational.tuc</field>
         <field name="model">hr.payroll.structure</field>
         <field name="inherit_id" ref="payroll_features.hr_payroll_structure_view_form_inherited"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='sueldo_basico']" position="before">
-                <field name="puntos"/>
-                <field name="indice"/>
-                <field name="tipo_estructura"/>
-                <field name="sub_estructura" invisible="tipo_estructura != 'no_docente'"/>
-            </xpath>
+            <notebook position="inside">
+                <page string="Educativo">
+                    <group>
+                        <field name="puntos"/>
+                        <field name="indice"/>
+                        <field name="tipo_estructura"/>
+                        <field name="sub_estructura" invisible="tipo_estructura != 'no_docente'"/>
+                    </group>
+                    <group>
+                        <field name="nivel_educativo" invisible="tipo_estructura != 'docente'"/>
+                        <field name="tipo_cargo"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Vista tree heredada con campos opcionales -->
+    <record id="view_hr_payroll_structure_tree_inherit_educational_tuc" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.tree.inherit.educational.tuc</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="inherit_id" ref="payroll.hr_payroll_structure_view_tree"/>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="tipo_estructura" optional="show"/>
+                <field name="nivel_educativo" optional="hide"/>
+                <field name="tipo_cargo" optional="hide"/>
+                <field name="sub_estructura" optional="hide"/>
+                <field name="puntos" optional="hide"/>
+                <field name="indice" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search view con agrupaciones -->
+    <record id="view_hr_payroll_structure_search_inherit_educational_tuc" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.search.inherit.educational.tuc</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="inherit_id" ref="payroll.hr_payroll_structure_view_search"/>
+        <field name="arch" type="xml">
+            <search position="attributes">
+                <field name="tipo_estructura" filter_domain="[]"/>
+                <field name="nivel_educativo" filter_domain="[]"/>
+                <field name="tipo_cargo" filter_domain="[]"/>
+            </search>
         </field>
     </record>
 </odoo>

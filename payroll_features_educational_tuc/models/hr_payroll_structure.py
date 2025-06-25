@@ -16,6 +16,16 @@ class HrPayrollStructure(models.Model):
         ('jerarquico', 'Jerárquico')
     ], string='Sub-estructura')
 
+    nivel_educativo = fields.Selection([
+        ('inicial', 'Inicial'),
+        ('primario', 'Primario'),
+        ('secundario', 'Secundario'),
+        ('terciario', 'Terciario'),
+        ('universitario', 'Universitario'),
+    ], string='Nivel Educativo', required=True)
+
+    tipo_cargo = fields.Char(string='Tipo de Cargo')
+
     @api.onchange('puntos', 'indice')
     def _onchange_puntos_indice(self):
         if self.puntos and self.indice:

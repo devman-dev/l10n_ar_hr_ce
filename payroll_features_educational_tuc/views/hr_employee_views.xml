@@ -9,15 +9,13 @@
                 <field name="antiguedad_global_anios" readonly="1"/>
             </xpath>
             <!-- Los agregamos en la página de atributos relación laboral -->
-            <xpath expr="//page[@name='atributos_relacion_laboral']//group" position="inside">
-                <group>
-                    <field name="legajo"/>
-                    <field name="sublegajo"/>
-                    <field name="cuil"/>
-                    <field name="cbu"/>
-                    <field name="tipo_empleado"/>
-                    <field name="tipo_empresa"/>
-                </group>
+            <xpath expr="//page[@name='atributos_relacion_laboral']//group[1]" position="inside">
+                <field name="legajo"/>
+                <field name="sublegajo"/>
+                <field name="cuil"/>
+                <field name="cbu"/>
+                <field name="tipo_empleado"/>
+                <field name="tipo_empresa"/>
             </xpath>
         </field>
     </record>

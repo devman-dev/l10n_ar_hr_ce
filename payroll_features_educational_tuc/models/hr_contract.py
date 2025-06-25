@@ -17,7 +17,7 @@ class HrContractInherit(models.Model):
     ], string='Nivel Educativo', required=True)
 
     
-    antiguedad_anios = fields.Integer(
+    antiguedad_anios = fields.Float(
         string='Años de Antigüedad',
         compute='_compute_antiguedad_anios',
         store=True
@@ -29,12 +29,16 @@ class HrContractInherit(models.Model):
         for contract in self:
             if contract.date_start:
                 today = date.today()
-                diff = today.year - contract.date_start.year - (
-                    (today.month, today.day) < (contract.date_start.month, contract.date_start.day)
-                )
-                contract.antiguedad_anios = max(diff, 0)
+                years = today.year - contract.date_start.year
+                months = today.month - contract.date_start.month
+                if today.day < contract.date_start.day:
+                    months -= 1
+                if months < 0:
+                    years -= 1
+                    months += 12
+                contract.antiguedad_anios = round(years + months / 12, 2)
             else:
-                contract.antiguedad_anios = 0
+                contract.antiguedad_anios = 0.0
 
     # 🔧 Sobrescribimos el create para evitar la validación del contrato único
     @api.model
@@ -82,3 +86,8 @@ class HrContractInherit(models.Model):
                     raise models.ValidationError(
                         "Un empleado solo puede tener un contrato activo por nivel educativo a la vez."
                     )
+
+    @api.model
+    def cron_actualizar_antiguedad(self):
+        contracts = self.search([])
+        contracts._compute_antiguedad_anios()
