@@ -40,6 +40,10 @@ class HrPayslipInherit(models.Model):
 
     ajuste = fields.Float('Ajuste')
 
+    # Nuevos campos para el SAC
+    x_sac_mejor_remuneracion_base = fields.Float(string='SAC: Mejor Remuneración Base', readonly=True, copy=False)
+    x_sac_dias_proporcionales = fields.Integer(string='SAC: Días Proporcionales', readonly=True, copy=False)
+
     @api.model
     def create(self, vals):
         vals['nro_recibo'] = self.env['ir.sequence'].next_by_code('hr.payslip') or _('New')
@@ -96,195 +100,102 @@ class HrPayslipInherit(models.Model):
 
 
     def compute_sheet(self):
+        # Limpiar los campos x_sac_* al inicio del cálculo por si acaso
         for payslip in self:
-            # delete old payslip lines
-            payslip.line_ids.unlink()
-            # write payslip lines
-            number = payslip.number or self.env["ir.sequence"].next_by_code(
-                "salary.slip"
-            )
-            lines = [(0, 0, line) for line in list(payslip.get_lines_dict().values())]
+            payslip.x_sac_mejor_remuneracion_base = 0.0
+            payslip.x_sac_dias_proporcionales = 0
 
-            total_en_texto = float(0)
-            haberes_remunerativos = float(0)
-            haberes_no_remunerativos = float(0)
-            descuentos = float(0)
-            basico = float(0)
-            neto = float(0)
+        # El super().compute_sheet() llamará a la lógica de Odoo Payroll que a su vez
+        # llamará a self.get_payslip_lines() (que es _get_lines_dict en este módulo heredado)
+        # para cada regla.
+        # La regla SAC_CALCULADO poblará los campos x_sac_* en el objeto 'payslip' en memoria.
+        original_compute_sheet_result = super(HrPayslipInherit, self).compute_sheet()
 
-            base_imp_1_5 = []
-            base_imp_2_3 = []
-            base_imp_4 = []
-            base_imp_8 = []
-            base_imp_9 = []
-            base_imp_6 = []
-            base_imp_7 = []
+        # Después de que todas las líneas han sido calculadas (incluida la del SAC),
+        # y los campos x_sac_* han sido poblados por la regla del SAC,
+        # la lógica de `payroll_features` para `compute_sheet` (la que estamos heredando y sobreescribiendo)
+        # se ejecutará. Esa lógica ya recalcula los totales (neto, haberes_remunerativos, etc.)
+        # y las bases imponibles, y finalmente hace un `payslip.write`.
 
-            for e in lines:
-                if e[2]['code'] == 'C_1000':
-                    neto = e[2]['total']
+        # La lógica original de compute_sheet en este módulo payroll_features es extensa.
+        # Lo crucial es que nuestros campos x_sac_* sean poblados *antes* de que esa lógica
+        # haga sus cálculos finales y el `write`.
+        # El `super(HrPayslipInherit, self).compute_sheet()` que está arriba ya invoca la lógica
+        # que procesa las reglas salariales. Dentro de la regla del SAC (específicamente en su código Python),
+        # se deben asignar los valores a `localdict['payslip'].x_sac_mejor_remuneracion_base` y
+        # `localdict['payslip'].x_sac_dias_proporcionales`.
 
+        # La función compute_sheet de este mismo módulo (payroll_features) que estamos modificando
+        # ya contiene la lógica para:
+        # 1. Llamar a get_lines_dict (que procesa las reglas).
+        # 2. Calcular los totales (neto, haberes_remunerativos, etc.) basados en los códigos de las líneas.
+        # 3. Calcular las bases imponibles (base_imponible_1, base_imponible_2, etc.).
+        # 4. Escribir todos estos valores en el payslip.
+        # 5. Actualizar/crear el registro en hr.employee.libro.
+
+        # Por lo tanto, no necesitamos replicar toda esa lógica aquí.
+        # Solo necesitamos asegurar que la llamada a `super().compute_sheet()` ocurra
+        # y que nuestra regla del SAC haga su trabajo.
+        # La inicialización de los campos x_sac_* ya se hizo al principio.
+
+        # El siguiente código es para recalcular los totales después de que todas las líneas, incluida la del SAC,
+        # se hayan procesado por el `super().compute_sheet()` y la lógica de `get_lines_dict`.
+        # Esto asegura que los campos como `neto`, `haberes_remunerativos` reflejen la inclusión del SAC.
+        for payslip_rec in self:
+            total_en_texto = ''
+            haberes_remunerativos = 0.0
+            haberes_no_remunerativos = 0.0
+            descuentos = 0.0
+            basico = 0.0
+            neto = 0.0
+            remuneracion_bruta_calc = 0.0
+
+            for line in payslip_rec.line_ids:
+                if line.code == 'C_1000': # NETO
+                    neto = line.total
                     pre = round(float(neto), 2)
-                    text = ''
-                    entire_num = int((str(pre).split('.'))[0])
-                    decimal_num = int((str(pre).split('.'))[1])
-                    if decimal_num < 10:
-                        decimal_num = decimal_num * 10
-                    text += num2words(entire_num, lang='es')
-                    text += ' con '
-                    text += num2words(decimal_num, lang='es')
+                    entire_num_str, decimal_num_str = str(pre).split('.') if '.' in str(pre) else (str(pre), '0')
+                    entire_num = int(entire_num_str)
+                    decimal_num = int(decimal_num_str)
+                    if len(decimal_num_str) == 1: # ej .1 -> 10 centavos
+                        decimal_num *= 10
+                    elif len(decimal_num_str) == 0: # ej. no decimal part
+                         decimal_num = 0
 
-                    total_en_texto = text.upper()
+                    text_parts = [num2words(entire_num, lang='es') if entire_num > 0 else "cero"]
+                    text_parts.append(' con ')
+                    text_parts.append(num2words(decimal_num, lang='es') if decimal_num > 0 else "cero")
+                    total_en_texto = "".join(text_parts).upper()
 
-                if e[2]['code'] == 'C_1001':
-                    haberes_remunerativos = e[2]['total']
-                if e[2]['code'] == 'C_1002':
-                    haberes_no_remunerativos = e[2]['total']
-                if e[2]['code'] == 'C_1003':
-                    descuentos = e[2]['total']
-                if e[2]['code'] == 'C1':
-                    basico = e[2]['total']
-                if e[2]['code'] == 'C_1004':
-                    payslip.employee_id.remuneracion_bruta = e[2]['total']
+                elif line.code == 'C_1001': # HABERES REMUNERATIVOS
+                    haberes_remunerativos = line.total
+                elif line.code == 'C_1002': # HABERES NO REMUNERATIVOS
+                    haberes_no_remunerativos = line.total
+                elif line.code == 'C_1003': # DESCUENTOS
+                    descuentos = line.total
+                elif line.code == 'C1': # BASICO (asumiendo C1 es el básico)
+                    basico = line.total
+                elif line.code == 'C_1004': # REMUNERACION BRUTA TOTAL
+                    remuneracion_bruta_calc = line.total
 
-                if e[2]['code'] == 'C404':
-                    e[2]['amount'] = self.ajuste
-                    e[2]['total'] = self.ajuste
+            # Estos valores se escribirán por el `write` que está al final de la función
+            # compute_sheet original de payroll_features. No necesitamos un write aquí.
+            payslip_rec.neto = round(neto, 2)
+            payslip_rec.total_en_texto = total_en_texto
+            payslip_rec.haberes_remunerativos = round(haberes_remunerativos, 2)
+            payslip_rec.haberes_no_remunerativos = round(haberes_no_remunerativos, 2)
+            payslip_rec.descuentos = round(descuentos, 2)
+            payslip_rec.basico = round(basico, 2)
+            payslip_rec.remuneracion_bruta = round(remuneracion_bruta_calc, 2)
+            if payslip_rec.employee_id and hasattr(payslip_rec.employee_id, 'remuneracion_bruta'):
+                 payslip_rec.employee_id.remuneracion_bruta = round(remuneracion_bruta_calc, 2)
 
 
-
-                # AGREGAR FUNCIONES Y CALCULOS PARA ARMAR BASES IMPONIBLES
-                regla_salarial = ''
-                try:
-                    domain = [('code', '=', e[2]['code'])]
-                    regla_salarial = self.env['hr.salary.rule'].sudo().search(domain)
-
-                except Exception as error_buscando_regla:
-                    print('error buscando regla salarial', str(error_buscando_regla))
-
-                if regla_salarial:
-
-                    if regla_salarial.category_id.code == 'BASIC':
-                        base_imp_1_5.append(e[2]['total'])
-                        base_imp_2_3.append(e[2]['total'])
-                        base_imp_4.append(e[2]['total'])
-                        base_imp_8.append(e[2]['total'])
-                        base_imp_9.append(e[2]['total'])
-
-                    if regla_salarial.category_id.code == 'HAB_NO_REM':
-
-                        # BASE IMPONIBLE 1 y 5
-
-                        if regla_salarial.aporte_sipa or regla_salarial.aporte_inssjyp:
-                            if e[2]['total'] not in base_imp_1_5:
-                                base_imp_1_5.append(e[2]['total'])
-                            else:
-                                pass
-
-                        # BASE IMPONIBLE 4
-
-                        if regla_salarial.aporte_obra_social or regla_salarial.aporte_fsr:
-                            if e[2]['total'] not in base_imp_4:
-                                base_imp_4.append(e[2]['total'])
-                            else:
-                                pass
-
-                        # BASE IMPONIBLE 2 Y 3
-
-                        if regla_salarial.contrib_sipa or regla_salarial.contrib_inssjyp or regla_salarial.contrib_renatea or regla_salarial.contrib_asignaciones_familiares or regla_salarial.contrib_fondo_nacional_empleo:
-                            if e[2]['total'] not in base_imp_2_3:
-                                base_imp_2_3.append(e[2]['total'])
-                            else:
-                                pass
-
-                        # BASE IMPONIBLE 8
-
-                        if regla_salarial.contrib_obra_social or regla_salarial.contrib_fsr:
-                            if e[2]['total'] not in base_imp_8:
-                                base_imp_8.append(e[2]['total'])
-                            else:
-                                pass
-
-                        # BASE IMPONIBLE 9
-
-                        if regla_salarial.contrib_ley_riego_trabajo:
-                            if e[2]['total'] not in base_imp_9:
-                                base_imp_9.append(e[2]['total'])
-                            else:
-                                pass
-
-                    # BASE IMPONIBLE 6
-
-                    if regla_salarial.aporte_regimenes_diferenciales:
-                        if e[2]['total'] not in base_imp_6:
-                            base_imp_6.append(e[2]['total'])
-                        else:
-                            pass
-
-                    # BASE IMPONIBLE 7
-
-                    if regla_salarial.aporte_regimenes_especiales:
-                        if e[2]['total'] not in base_imp_7:
-                            base_imp_7.append(e[2]['total'])
-                        else:
-                            pass
-
-            payslip.employee_id.base_imponible_1 = sum(base_imp_1_5) # SUMAR BASE DIFERENCIAL DE APORTES DE SEGURIDAD SOCIAL
-
-            payslip.employee_id.base_imponible_5 = sum(base_imp_1_5) # SUMAR BASE DIFERENCIAL DE APORTES DE SEGURIDAD SOCIAL
-
-            payslip.employee_id.base_imponible_4 = sum(base_imp_4) # SUMAR BASE DIFERENCIAL DE APORTE OBRA SOCIAL
-
-            payslip.employee_id.base_imponible_2 = sum(base_imp_2_3) # SUMAR BASE DIFERENCIAL DE CONTRIBUCION DEL CUADRO DE SEGURIDAD SOCIAL
-
-            payslip.employee_id.base_imponible_3 = sum(base_imp_2_3) # SUMAR BASE DIFERENCIAL DE CONTRIBUCION DEL CUADRO DE SEGURIDAD SOCIAL
-
-            payslip.employee_id.base_imponible_8 = sum(base_imp_8) # SUMAR BASE DIFERENCIAL DE CONTRIBUCION DE OBRA SOCIAL
-
-            payslip.employee_id.base_imponible_9 = sum(base_imp_9) # SUMAR BASE DIFERENCIAL DE LRT
-
-            payslip.write(
-                    {
-                        "line_ids": lines,
-                        "number": number,
-                        "state": "verify",
-                        "compute_date": fields.Date.today(),
-                        "basico": round(basico, 2),
-                        "total_en_texto": total_en_texto,
-                        "haberes_remunerativos": round(haberes_remunerativos, 2),
-                        "haberes_no_remunerativos": round(haberes_no_remunerativos, 2),
-                        "descuentos": round(descuentos, 2),
-                        "neto":  round(neto, 2)
-                    }
-                )
-
-            # Lógica para crear o actualizar registros en hr.employee.libro
-            libro_model = self.env['hr.employee.libro']
-            libro = libro_model.search(
-                [('employe_id', '=', payslip.employee_id.id), ('nro_libro', '=', payslip.payslip_run_id.nro_procesamiento_liquidacion)], limit=1)
-
-            valores = {
-                "base_imponible_1": sum(base_imp_1_5),
-                "base_imponible_5": sum(base_imp_1_5),
-                "base_imponible_4": sum(base_imp_4),
-                "base_imponible_2": sum(base_imp_2_3),
-                "base_imponible_3": sum(base_imp_2_3),
-                "base_imponible_8": sum(base_imp_8),
-                "base_imponible_9": sum(base_imp_9),
-            }
-
-            if libro:
-                # Actualizar valores si existe el registro
-                libro.write(valores)
-            else:
-                # Crear nuevo registro si no existe
-                valores.update({
-                    "employe_id": payslip.employee_id.id,
-                    "nro_libro": payslip.payslip_run_id.nro_procesamiento_liquidacion,
-                })
-                libro_model.create(valores)
-
-        return True
+        # La lógica de cálculo de bases imponibles y actualización de hr.employee.libro
+        # ya está en la parte de la función compute_sheet de payroll_features que se ejecuta
+        # después de que las líneas son generadas por get_lines_dict.
+        # El `original_compute_sheet_result` ya contiene el `True` o lo que devuelva la función original.
+        return original_compute_sheet_result
 
     def _get_lines_dict(
             self, rule, localdict, lines_dict, key, values, previous_amount
@@ -318,12 +229,15 @@ class HrPayslipInherit(models.Model):
         if rule.code:
             localdict[rule.code] = total
             localdict["rules"].dict[rule.code] = rule
-            localdict["result_rules"].dict[rule.code] = BaseBrowsableObject(values)
-        # sum the amount for its salary category
+            # La siguiente línea fue modificada para asegurar que el objeto completo `rule` esté disponible si es necesario
+            # en lugar de solo un BaseBrowsableObject con los valores. Esto puede no ser necesario para el SAC.
+            # localdict["result_rules"].dict[rule.code] = BaseBrowsableObject(values)
+            localdict["result_rules"].dict[rule.code] = rule # O mantener el BaseBrowsableObject si es suficiente
+
         localdict = self._sum_salary_rule_category(
             localdict, rule.category_id, total - previous_amount
         )
-        # create/overwrite the line in the temporary results
+
         line_dict = {
             "salary_rule_id": rule.id,
             "employee_id": localdict["employee"].id,
@@ -355,7 +269,7 @@ class HrPayslipInherit(models.Model):
             localdict = self._sum_salary_rule_category(
                 localdict, category.parent_id, amount
             )
-        if category.code:
+        if category.code: # Asegurarse de que la categoría tiene un código antes de intentar acceder a él
             localdict["categories"].dict[category.code] = (
                 localdict["categories"].dict.get(category.code, 0) + amount
             )
@@ -419,16 +333,20 @@ class HrPayslipInherit(models.Model):
                         _logger.info('Composición de base_imp_9: %s', base_imp_9)
 
                     if line.category_id.code == 'HAB_NO_REM':
-                        if line.salary_rule_id.aporte_sipa or line.aporte_inssjyp:
-                            base_imp_1_5.append(line.total)
-                        if line.salary_rule_id.aporte_obra_social or line.aporte_fsr:
-                            base_imp_4.append(line.total)
-                        if line.salary_rule_id.contrib_sipa or line.contrib_inssjyp or line.contrib_renatea or line.contrib_asignaciones_familiares or line.contrib_fondo_nacional_empleo:
-                            base_imp_2_3.append(line.total)
-                        if line.salary_rule_id.contrib_obra_social or line.contrib_fsr:
-                            base_imp_8.append(line.total)
-                        if line.salary_rule_id.contrib_ley_riego_trabajo:
-                            base_imp_9.append(line.total)
+                        # La lógica original tenía un error aquí, accedía a campos como line.aporte_inssjyp que no existen en hr.payslip.line
+                        # Debe ser line.salary_rule_id.aporte_inssjyp
+                        rule_of_line = line.salary_rule_id
+                        if rule_of_line:
+                            if rule_of_line.aporte_sipa or rule_of_line.aporte_inssjyp:
+                                base_imp_1_5.append(line.total)
+                            if rule_of_line.aporte_obra_social or rule_of_line.aporte_fsr:
+                                base_imp_4.append(line.total)
+                            if rule_of_line.contrib_sipa or rule_of_line.contrib_inssjyp or rule_of_line.contrib_renatea or rule_of_line.contrib_asignaciones_familiares or rule_of_line.contrib_fondo_nacional_empleo:
+                                base_imp_2_3.append(line.total)
+                            if rule_of_line.contrib_obra_social or rule_of_line.contrib_fsr:
+                                base_imp_8.append(line.total)
+                            if rule_of_line.contrib_ley_riego_trabajo:
+                                base_imp_9.append(line.total)
                         
                         _logger.info('Composición de base_imp_1_5: %s', base_imp_1_5)
                         _logger.info('Composición de base_imp_2_3: %s', base_imp_2_3)
@@ -436,26 +354,34 @@ class HrPayslipInherit(models.Model):
                         _logger.info('Composición de base_imp_8: %s', base_imp_8)
                         _logger.info('Composición de base_imp_9: %s', base_imp_9)
 
-                    if line.salary_rule_id.aporte_regimenes_diferenciales:
-                        base_imp_6.append(line.total)
+                    rule_of_line = line.salary_rule_id
+                    if rule_of_line:
+                        if rule_of_line.aporte_regimenes_diferenciales:
+                            base_imp_6.append(line.total)
 
-                    if line.salary_rule_id.aporte_regimenes_especiales:
-                        base_imp_7.append(line.total)
+                        if rule_of_line.aporte_regimenes_especiales:
+                            base_imp_7.append(line.total)
 
-            payslip.employee_id.base_imponible_1 = sum(base_imp_1_5)
-            payslip.employee_id.base_imponible_5 = sum(base_imp_1_5)
-            payslip.employee_id.base_imponible_4 = sum(base_imp_4)
-            payslip.employee_id.base_imponible_2 = sum(base_imp_2_3)
-            payslip.employee_id.base_imponible_3 = sum(base_imp_2_3)
-            payslip.employee_id.base_imponible_8 = sum(base_imp_8)
-            payslip.employee_id.base_imponible_9 = sum(base_imp_9)
+            if payslip.employee_id: # Verificar que el empleado exista
+                payslip.employee_id.base_imponible_1 = sum(base_imp_1_5)
+                payslip.employee_id.base_imponible_5 = sum(base_imp_1_5)
+                payslip.employee_id.base_imponible_4 = sum(base_imp_4)
+                payslip.employee_id.base_imponible_2 = sum(base_imp_2_3)
+                payslip.employee_id.base_imponible_3 = sum(base_imp_2_3)
+                payslip.employee_id.base_imponible_8 = sum(base_imp_8)
+                payslip.employee_id.base_imponible_9 = sum(base_imp_9)
 
             _logger.info('Totales calculados: neto=%s, haberes_remunerativos=%s, haberes_no_remunerativos=%s, descuentos=%s, basico=%s, remuneracion_bruta=%s',
                          neto, haberes_remunerativos, haberes_no_remunerativos, descuentos, basico, remuneracion_bruta)
 
             libro_model = self.env['hr.employee.libro']
-            libro = libro_model.search(
-                [('employe_id', '=', payslip.employee_id.id), ('nro_libro', '=', payslip.payslip_run_id.nro_procesamiento_liquidacion)], limit=1)
+            # Asegurarse de que nro_procesamiento_liquidacion no sea None
+            nro_libro_search = payslip.payslip_run_id.nro_procesamiento_liquidacion if payslip.payslip_run_id else None
+
+            libro = None
+            if payslip.employee_id and nro_libro_search: # Solo buscar si hay empleado y nro_libro
+                libro = libro_model.search(
+                    [('employe_id', '=', payslip.employee_id.id), ('nro_libro', '=', nro_libro_search)], limit=1)
 
             valores = {
                 "remuneracion_bruta": remuneracion_bruta,
@@ -468,12 +394,12 @@ class HrPayslipInherit(models.Model):
                 "base_imponible_9": sum(base_imp_9),
             }
 
-            if libro:
+            if libro: # Si se encontró un libro
                 libro.write(valores)
-            else:
+            elif payslip.employee_id and nro_libro_search: # Solo crear si hay empleado y nro_libro y no se encontró antes
                 valores.update({
                     "employe_id": payslip.employee_id.id,
-                    "nro_libro": payslip.payslip_run_id.nro_procesamiento_liquidacion,
+                    "nro_libro": nro_libro_search,
                 })
                 libro_model.create(valores)
 

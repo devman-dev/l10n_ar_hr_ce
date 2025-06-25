@@ -75,6 +75,10 @@
                                         <t>Remuneración: <span t-field="o.basico"/></t>
                                         <br/>
                                         <t>Dep. Ap. Jub: <span t-field="o.fecha_ult_deposito"/> - <span t-field="o.banco_diario_contable_id"/></t>
+                                        <t t-if="o.tipo_liquidacion == 'aguinaldo'">
+                                            <br/>
+                                            <t>Mejor Rem. Base SAC: <span t-field="o.x_sac_mejor_remuneracion_base" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/></t>
+                                        </t>
                                     </div>
                                     <div class="col" style="width:40%; margin-left:20px; font-size: 12px;">
                                         <t>Fecha de Ingreso: <span t-field="o.contract_id.date_start"/></t>
@@ -82,6 +86,10 @@
                                         <t>Fecha:<span t-field="o.compute_date"/> </t>
                                         <br/>
                                         <t>Categoría:<span t-field="o.struct_id"/></t>
+                                        <t t-if="o.tipo_liquidacion == 'aguinaldo'">
+                                            <br/>
+                                            <t>Días Proporcionales SAC: <span t-field="o.x_sac_dias_proporcionales"/></t>
+                                        </t>
                                     </div>
                                 </div>
                                 <table class="table" style="margin-bottom:0px; background-color:#ebe7e4;">
@@ -134,6 +142,32 @@
                                                          <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((lc.total * -1))"/></td>
                                                     </t>
                                                     <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="lc.category_id.code == 'SAC'">
+                                                <tr>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.code"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.name"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.quantity"/></td>
+                                                    <t t-if="lc.total >= 0">
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;">
+                                                            <!-- El SAC es un monto total, no tiene valor unitario en el mismo sentido que hs normales -->
+                                                            <span t-esc="'{:0,.2f}'.format(lc.total)"/>
+                                                        </td>
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;">
+                                                            <span t-esc="'{:0,.2f}'.format(lc.total)"/>
+                                                        </td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0"> <!-- Aunque el SAC no debería ser negativo -->
+                                                       <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;">
+                                                           <span t-esc="'{:0,.2f}'.format(lc.total)"/>
+                                                       </td>
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;">
+                                                            <span t-esc="'{:0,.2f}'.format((lc.total * -1))"/>
+                                                        </td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td> <!-- Columna HABERES NO REMUNERATIVOS vacía -->
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td> <!-- Columna DESCUENTOS vacía -->
                                                 </tr>
                                             </t>
                                             <t t-if="lc.category_id.code == 'DED'">
@@ -211,6 +245,10 @@
                                         <t>Remuneración: <span t-field="o.basico"/></t>
                                         <br/>
                                         <t>Dep. Ap. Jub: <span t-field="o.fecha_ult_deposito"/> - <span t-field="o.banco_diario_contable_id"/></t>
+                                        <t t-if="o.tipo_liquidacion == 'aguinaldo'">
+                                            <br/>
+                                            <t>Mejor Rem. Base SAC: <span t-field="o.x_sac_mejor_remuneracion_base" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/></t>
+                                        </t>
                                     </div>
                                     <div class="col" style="width:40%; margin-left:20px; font-size: 12px;">
                                         <t>Fecha de Ingreso: <span t-field="o.contract_id.date_start"/></t>
@@ -218,6 +256,10 @@
                                         <t>Fecha:<span t-field="o.compute_date"/> </t>
                                         <br/>
                                         <t>Categoría:<span t-field="o.struct_id"/></t>
+                                        <t t-if="o.tipo_liquidacion == 'aguinaldo'">
+                                            <br/>
+                                            <t>Días Proporcionales SAC: <span t-field="o.x_sac_dias_proporcionales"/></t>
+                                        </t>
                                     </div>
                                 </div>
                                 <table class="table" style="margin-bottom:0px; background-color:#ebe7e4;">
@@ -270,6 +312,32 @@
                                                          <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-esc="'{:0,.2f}'.format((lc.total * -1))"/></td>
                                                     </t>
                                                     <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="lc.category_id.code == 'SAC'">
+                                                <tr>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.code"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.name"/></td>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"><span t-field="lc.quantity"/></td>
+                                                    <t t-if="lc.total >= 0">
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;">
+                                                            <!-- El SAC es un monto total, no tiene valor unitario en el mismo sentido que hs normales -->
+                                                            <span t-esc="'{:0,.2f}'.format(lc.total)"/>
+                                                        </td>
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;">
+                                                            <span t-esc="'{:0,.2f}'.format(lc.total)"/>
+                                                        </td>
+                                                    </t>
+                                                    <t t-if="lc.total &lt; 0"> <!-- Aunque el SAC no debería ser negativo -->
+                                                       <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;">
+                                                           <span t-esc="'{:0,.2f}'.format(lc.total)"/>
+                                                       </td>
+                                                        <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;">
+                                                            <span t-esc="'{:0,.2f}'.format((lc.total * -1))"/>
+                                                        </td>
+                                                    </t>
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td> <!-- Columna HABERES NO REMUNERATIVOS vacía -->
+                                                    <td style="text-align: center; vertical-align: middle; font-size: 10px; padding: 2px;"></td> <!-- Columna DESCUENTOS vacía -->
                                                 </tr>
                                             </t>
                                             <t t-if="lc.category_id.code == 'DED'">
