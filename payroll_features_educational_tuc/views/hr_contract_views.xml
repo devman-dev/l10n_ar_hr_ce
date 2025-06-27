@@ -5,18 +5,23 @@
         <field name="model">hr.contract</field>
         <field name="inherit_id" ref="payroll.hr_contract_view_form"/>
         <field name="arch" type="xml">
-            <!-- Add nivel_educativo and antiguedad_anios within the 'salary' group -->
-            <xpath expr="//group[@name='salary']" position="inside">
-                <group string="Información Educativa y Antigüedad">
-                    <field name="nivel_educativo"/>
-                    <field name="antiguedad_anios"/>
-                </group>
-                <group string="Decretos Aplicables">
-                    <field name="decreto_413"/>
-                    <field name="decreto_1741"/>
-                    <field name="decreto_2780"/>
-                </group>
-            </xpath>
+            <notebook position="inside">
+                <page string="Información Educativa" name="educational_info">
+                    <group>
+                        <group string="Información Educativa y Antigüedad">
+                            <field name="nivel_educativo"/>
+                            <field name="tipo_empleado"/>
+                            <field name="antiguedad_anios"/>
+                            <field name="porcentaje_antiguedad" readonly="1"/>
+                        </group>
+                        <group string="Decretos Aplicables">
+                            <field name="decreto_413"/>
+                            <field name="decreto_1741"/>
+                            <field name="decreto_2780"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
         </field>
     </record>
 </odoo>

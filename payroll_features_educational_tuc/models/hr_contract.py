@@ -9,11 +9,16 @@ class HrContractInherit(models.Model):
     decreto_2780 = fields.Boolean(string='Contiene Decreto 2780/3 Art. 10', default=False)
     
     nivel_educativo = fields.Selection([
-        ('inicial', 'Inicial'),
         ('primario', 'Primario'),
         ('secundario', 'Secundario'),
         ('terciario', 'Terciario'),
-        ('universitario', 'Universitario'),
+        ('primario_no_subvencionado', 'Primario no subvencionado'),
+        ('secundario_no_subvencionado', 'Secundario no subvencionado'),
+        ('terciario_no_subvencionado', 'Terciario no subvencionado'),
+        ('no_docente_administrativo', 'No docente - Administrativo I'),
+        ('no_docente_administrativo', 'No docente - Administrativo II'),
+        ('no_docente_jerarquico', 'No docente - Jerárquico'),
+        ('no_docente_maestranza', 'No docente - Maestranza'),
     ], string='Nivel Educativo', required=True)
 
     
@@ -22,6 +27,35 @@ class HrContractInherit(models.Model):
         compute='_compute_antiguedad_anios',
         store=True
     )
+   
+    porcentaje_antiguedad = fields.Float(
+        string='Porcentaje Antigüedad',
+        compute='_compute_porcentaje_antiguedad',
+        store=True
+    )
+
+    tipo_empleado = fields.Selection([
+        ('director', 'Director'),
+        ('uom', 'UOM'),
+        ('aec', 'AEC'),
+        ('fuera_convenio', 'Fuera de convenio'),
+        ('docente', 'Docente'),
+        ('no_docente', 'No Docente'),
+        ('jerarquico', 'Jerárquico'),
+    ], string='Tipo de Empleado')
+
+    @api.depends('tipo_empleado', 'antiguedad_anios')
+    def _compute_porcentaje_antiguedad(self):
+        for contract in self:
+            porcentaje = 0.0
+            if contract.tipo_empleado and contract.antiguedad_anios:
+                tabla = self.env['hr.antiguedad.tabla'].search([
+                    ('tipo_empleado', '=', contract.tipo_empleado),
+                    ('anios', '<=', contract.antiguedad_anios)
+                ], order='anios desc', limit=1)
+                if tabla:
+                    porcentaje = tabla.porcentaje
+            contract.porcentaje_antiguedad = porcentaje
 
     @api.depends('date_start')
     def _compute_antiguedad_anios(self):

@@ -17,7 +17,8 @@ class HrEmployeeInherit(models.Model):
     cbu = fields.Char('CBU', size=24)
 
     tipo_empleado = fields.Selection([('director', 'Director'), ('uom', 'UOM'), ('aec', 'AEC'),
-                                      ('fuera_convenio', 'Fuera de convenio')])
+                                      ('fuera_convenio', 'Fuera de convenio'), ('docente', 'Docente'), 
+                                      ('no_docente', 'No Docente'), ('jerarquico', 'Jerárquico')])
 
     conyuge = fields.Boolean('Cónyuge')
     cantidad_hijos = fields.Integer('Cant.Hijos', size=2)
