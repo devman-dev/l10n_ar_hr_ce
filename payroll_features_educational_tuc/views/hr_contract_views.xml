@@ -12,6 +12,7 @@
                             <field name="nivel_educativo"/>
                             <field name="tipo_empleado"/>
                             <field name="antiguedad_anios"/>
+                            <field name="antiguedad_meses"/>
                             <field name="porcentaje_antiguedad" readonly="1"/>
                         </group>
                         <group string="Decretos Aplicables">

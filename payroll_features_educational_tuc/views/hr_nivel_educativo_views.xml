@@ -1,0 +1,35 @@
+<odoo>
+    <record id="view_hr_nivel_educativo_tree" model="ir.ui.view">
+        <field name="name">hr.nivel.educativo.tree</field>
+        <field name="model">hr.nivel.educativo</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="actualiza_x_indice"/>
+                <field name="actualiza_x_valor_hora"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_hr_nivel_educativo_form" model="ir.ui.view">
+        <field name="name">hr.nivel.educativo.form</field>
+        <field name="model">hr.nivel.educativo</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="name"/>
+                    <field name="actualiza_x_indice"/>
+                    <field name="actualiza_x_valor_hora"/>
+                </group>
+            </form>
+        </field>
+    </record>
+    <menuitem id="menu_hr_nivel_educativo"
+              name="Niveles Educativos"
+              parent="hr_contract.menu_human_resources_configuration_contract"
+              sequence="10"/>
+    <act_window id="action_hr_nivel_educativo"
+                name="Niveles Educativos"
+                res_model="hr.nivel.educativo"
+                view_mode="tree,form"
+                menu_id="menu_hr_nivel_educativo"/>
+</odoo>

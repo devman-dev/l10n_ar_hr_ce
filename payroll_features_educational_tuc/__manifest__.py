@@ -1,6 +1,6 @@
 {
     "name": "Payroll Features Educational Tuc",
-    "version": "5.2.0",
+    "version": "5.3.0",
     "summary": "Extensión de nómina para el sector educativo de Tucumán",
     "author": "Devman",
     "website": "https://www.devman.com.ar",

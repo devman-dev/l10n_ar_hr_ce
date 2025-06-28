@@ -21,6 +21,7 @@
                     <field name="tipo_empleado"/>
                     <field name="tipo_no_docente" invisible="tipo_empleado!='no_docente'"/>
                     <field name="anios"/>
+                    <field name="meses"/>
                     <field name="porcentaje"/>
                 </group>
             </form>
@@ -35,9 +36,9 @@
 
     <menuitem id="menu_hr_antiguedad_tabla"
               name="Tabla de Antigüedad"
-              parent="hr.menu_hr_employee_payroll"
+              parent="hr_contract.menu_human_resources_configuration_contract"
               action="action_hr_antiguedad_tabla"
-              sequence="7"
+              sequence="40"
               groups="payroll.group_payroll_user"/>
 
 </odoo>

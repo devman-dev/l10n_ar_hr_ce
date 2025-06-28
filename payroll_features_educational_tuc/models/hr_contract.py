@@ -22,12 +22,17 @@ class HrContractInherit(models.Model):
     ], string='Nivel Educativo', required=True)
 
     
-    antiguedad_anios = fields.Float(
+    antiguedad_anios = fields.Integer(
         string='Años de Antigüedad',
-        compute='_compute_antiguedad_anios',
+        compute='_compute_antiguedad',
         store=True
     )
-   
+    antiguedad_meses = fields.Integer(
+        string='Meses de Antigüedad',
+        compute='_compute_antiguedad',
+        store=True
+    )
+
     porcentaje_antiguedad = fields.Float(
         string='Porcentaje Antigüedad',
         compute='_compute_porcentaje_antiguedad',
@@ -44,23 +49,12 @@ class HrContractInherit(models.Model):
         ('jerarquico', 'Jerárquico'),
     ], string='Tipo de Empleado')
 
-    @api.depends('tipo_empleado', 'antiguedad_anios')
-    def _compute_porcentaje_antiguedad(self):
-        for contract in self:
-            porcentaje = 0.0
-            if contract.tipo_empleado and contract.antiguedad_anios:
-                tabla = self.env['hr.antiguedad.tabla'].search([
-                    ('tipo_empleado', '=', contract.tipo_empleado),
-                    ('anios', '<=', contract.antiguedad_anios)
-                ], order='anios desc', limit=1)
-                if tabla:
-                    porcentaje = tabla.porcentaje
-            contract.porcentaje_antiguedad = porcentaje
-
     @api.depends('date_start')
-    def _compute_antiguedad_anios(self):
+    def _compute_antiguedad(self):
         from datetime import date
         for contract in self:
+            contract.antiguedad_anios = 0
+            contract.antiguedad_meses = 0
             if contract.date_start:
                 today = date.today()
                 years = today.year - contract.date_start.year
@@ -70,9 +64,22 @@ class HrContractInherit(models.Model):
                 if months < 0:
                     years -= 1
                     months += 12
-                contract.antiguedad_anios = round(years + months / 12, 2)
-            else:
-                contract.antiguedad_anios = 0.0
+                contract.antiguedad_anios = years if years > 0 else 0
+                contract.antiguedad_meses = months if months > 0 else 0
+
+    @api.depends('tipo_empleado', 'antiguedad_anios', 'antiguedad_meses')
+    def _compute_porcentaje_antiguedad(self):
+        for contract in self:
+            porcentaje = 0.0
+            if contract.tipo_empleado is not None:
+                tabla = self.env['hr.antiguedad.tabla'].search([
+                    ('tipo_empleado', '=', contract.tipo_empleado),
+                    ('anios', '<=', contract.antiguedad_anios),
+                    ('meses', '<=', contract.antiguedad_meses),
+                ], order='anios desc, meses desc', limit=1)
+                if tabla:
+                    porcentaje = tabla.porcentaje
+            contract.porcentaje_antiguedad = porcentaje
 
     # 🔧 Sobrescribimos el create para evitar la validación del contrato único
     @api.model
@@ -124,4 +131,5 @@ class HrContractInherit(models.Model):
     @api.model
     def cron_actualizar_antiguedad(self):
         contracts = self.search([])
-        contracts._compute_antiguedad_anios()
+        contracts._compute_antiguedad()
+        contracts._compute_porcentaje_antiguedad()
