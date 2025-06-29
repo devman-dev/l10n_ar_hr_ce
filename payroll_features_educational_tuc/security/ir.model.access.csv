@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_hr_employee_ganancias_user,hr.employee.ganancias.user,payroll_features_educational_tuc.model_hr_employee_ganancias,payroll.group_payroll_user,1,1,1,1
-access_hr_employee_ganancias_deduccion_user,hr.employee.ganancias.deduccion.user,payroll_features_educational_tuc.model_hr_employee_ganancias_deduccion,payroll.group_payroll_user,1,1,1,1
 access_hr_antiguedad_tabla_user,hr.antiguedad.tabla.user,payroll_features_educational_tuc.model_hr_antiguedad_tabla,payroll.group_payroll_user,1,1,1,1
+access_hr_nivel_educativo_user,hr.nivel.educativo.user,payroll_features_educational_tuc.model_hr_nivel_educativo,payroll.group_payroll_user,1,1,1,1
+access_hr_tipo_estructura_user,hr.tipo.estructura.user,payroll_features_educational_tuc.model_hr_tipo_estructura,payroll.group_payroll_user,1,1,1,1
+access_hr_sub_estructura_user,hr.sub.estructura.user,payroll_features_educational_tuc.model_hr_sub_estructura,payroll.group_payroll_user,1,1,1,1

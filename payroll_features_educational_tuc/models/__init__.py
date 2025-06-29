@@ -5,3 +5,6 @@ from . import hr_employee
 from . import hr_payslip_run
 from . import hr_antiguedad_tabla
 from . import hr_payslip_by_employees
+from . import hr_nivel_educativo
+from . import hr_tipo_estructura
+from . import hr_sub_estructura

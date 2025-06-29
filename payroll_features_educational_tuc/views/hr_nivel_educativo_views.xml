@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_hr_nivel_educativo_tree" model="ir.ui.view">
         <field name="name">hr.nivel.educativo.tree</field>
@@ -10,6 +11,7 @@
             </tree>
         </field>
     </record>
+    
     <record id="view_hr_nivel_educativo_form" model="ir.ui.view">
         <field name="name">hr.nivel.educativo.form</field>
         <field name="model">hr.nivel.educativo</field>
@@ -23,13 +25,16 @@
             </form>
         </field>
     </record>
+
+    <record id="action_hr_nivel_educativo" model="ir.actions.act_window">
+        <field name="name">Niveles Educativos</field>
+        <field name="res_model">hr.nivel.educativo</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <menuitem id="menu_hr_nivel_educativo"
               name="Niveles Educativos"
               parent="hr_contract.menu_human_resources_configuration_contract"
+              action="action_hr_nivel_educativo"
               sequence="10"/>
-    <act_window id="action_hr_nivel_educativo"
-                name="Niveles Educativos"
-                res_model="hr.nivel.educativo"
-                view_mode="tree,form"
-                menu_id="menu_hr_nivel_educativo"/>
 </odoo>

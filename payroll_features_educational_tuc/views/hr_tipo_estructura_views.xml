@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_hr_tipo_estructura_tree" model="ir.ui.view">
         <field name="name">hr.tipo.estructura.tree</field>
@@ -19,13 +20,14 @@
             </form>
         </field>
     </record>
+    <record id="action_hr_tipo_estructura" model="ir.actions.act_window">
+        <field name="name">Tipos de Estructura</field>
+        <field name="res_model">hr.tipo.estructura</field>
+        <field name="view_mode">tree,form</field>
+    </record>
     <menuitem id="menu_hr_tipo_estructura"
               name="Tipos de Estructura"
               parent="hr_contract.menu_human_resources_configuration_contract"
+              action="action_hr_tipo_estructura"
               sequence="20"/>
-    <act_window id="action_hr_tipo_estructura"
-                name="Tipos de Estructura"
-                res_model="hr.tipo.estructura"
-                view_mode="tree,form"
-                menu_id="menu_hr_tipo_estructura"/>
 </odoo>

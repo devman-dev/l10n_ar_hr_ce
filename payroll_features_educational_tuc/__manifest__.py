@@ -21,6 +21,7 @@
         * Integración con sistema de puntajes docentes
     """,
     "data": [
+        "security/ir.model.access.csv",
         "data/cron_actualizar_antiguedad.xml",
         "views/hr_payroll_structure_views.xml",
         "views/res_company_views.xml",
@@ -29,6 +30,9 @@
         "views/hr_employee_views.xml",
         "views/hr_antiguedad_tabla_views.xml",
         "views/hr_payslip_by_employees_view.xml",
+        "views/hr_nivel_educativo_views.xml",
+        "views/hr_tipo_estructura_views.xml",
+        "views/hr_sub_estructura_views.xml",
     ],
     'post_init_hook': 'apply_monkey_patch',
     "installable": True,
